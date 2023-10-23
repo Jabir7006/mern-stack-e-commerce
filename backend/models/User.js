@@ -45,7 +45,7 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
-});
+}); 
 
 const User = model("User", userSchema);
 module.exports = User;

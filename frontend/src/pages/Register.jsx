@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { handleRegister } from "../services/userService";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { register } from "../features/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, register } from "../features/userSlice";
+import { setLoading, stopLoading } from "../features/loadingSlice";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,7 @@ const Register = () => {
     password: "",
     image: "",
   });
+  const { loading } = useSelector((state) => state.loading);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleChange = (e) => {
@@ -23,6 +25,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(setLoading());
     try {
       const userData = new FormData();
       userData.append("firstName", inputsData.firstName);
@@ -32,18 +35,22 @@ const Register = () => {
       userData.append("image", inputsData.image);
 
       const response = await handleRegister(userData);
-        console.log(response);
-      dispatch(register({ user: response.payload.user, token: response.payload.token }));
-      navigate("/");
-      toast.success(response.message);
+      dispatch(stopLoading());
+      toast("📩 " + response.message);
     } catch (error) {
-      dispatch(register({ user: null, token: null }));
+      dispatch(logout());
+      dispatch(stopLoading());
       toast.error(error.response.data.message);
     }
   };
   return (
     <>
-      <div className="bg-gray-100 flex justify-center items-center h-screen overflow-y-hidden">
+      {loading && (
+        <div className="text-2xl font-semibold fixed top-0 left-0 w-full h-full bg-white flex justify-center items-center z-50">
+          Loading...
+        </div>
+      )}
+      <div className="bg-gray-100 flex justify-center items-center h-screen">
         {/* Left: Image */}
         <div className="w-1/2 h-screen hidden lg:block">
           <img
@@ -124,7 +131,7 @@ const Register = () => {
 
             {/* image Input */}
             <div className="mb-3">
-              <label htmlFor="password" className="block text-gray-600">
+              <label htmlFor="image" className="block text-gray-600">
                 Profile Picture
               </label>
               <input
@@ -143,12 +150,7 @@ const Register = () => {
                 Remember Me
               </label>
             </div>
-            {/* Forgot Password Link */}
-            <div className="mb-6 text-blue-500">
-              <a href="#" className="hover:underline">
-                Forgot Password?
-              </a>
-            </div>
+
             {/* submit Button */}
             <button
               type="submit"

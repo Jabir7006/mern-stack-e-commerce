@@ -8,6 +8,9 @@ const handleLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      throw createError(400, "All fields are required");
+    }
     //check user already exist
 
     const user = await User.findOne({ email });
@@ -60,16 +63,19 @@ const handleLogOut = async (req, res, next) => {
   }
 };
 
-const checkUserLoggedIn = async (req, res, next) => {
+const checkUserLoggedIn = (req, res, next) => {
   try {
     const token = req.cookies.token;
 
     if (!token) {
       throw createError(401, "you are not logged in. please login first");
-      return res.json(false);
     }
 
-    return res.json(true);
+      jwt.verify(token, process.env.SECRET_KEY);
+
+    return successResponse(res, {
+      statusCode: 200,
+    });
   } catch (error) {
     next(error);
   }

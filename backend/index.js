@@ -7,6 +7,8 @@ const createError = require("http-errors");
 const connectDB = require("./config/db");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
+const path = require("path");
+
 
 app.listen(process.env.PORT, async () => {
   console.log(`Server is running on port http://localhost:${process.env.PORT}`);
@@ -25,7 +27,8 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
