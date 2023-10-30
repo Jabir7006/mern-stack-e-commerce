@@ -167,12 +167,6 @@ const deleteUser = async (req, res, next) => {
     // Find the user to get the image path
     const user = await User.findById(id);
 
-    if (user) {
-      // Delete the image file
-      const imagePath = user.image.replace("/images", "public/images");
-      fs.unlinkSync(path.resolve(__dirname, `../${imagePath}`));
-    }
-
     // Delete the user
     await User.findByIdAndDelete(id);
 

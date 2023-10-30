@@ -36,7 +36,7 @@ const Register = () => {
 
       const response = await handleRegister(userdata);
       toast("📩 " + response.message);
-      dispatch(successLogin({ token: response.payload.accessToken }));
+      dispatch(successLogin());
     } catch (error) {
       toast("❌ " + error.response.data.message);
       dispatch(failLogin());
@@ -44,7 +44,7 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className="pb-8">
       {loading && (
         <div className="fixed top-0 left-0 bg-white w-full h-full flex justify-center items-center z-50">
           <div className="border-t-transparent border-solid animate-spin rounded-full border-blue-400 border-8 h-20 w-20" />
@@ -176,7 +176,7 @@ const Register = () => {
             </div>
           </div>
         </div>
-        <div className="hidden lg:flex items-center justify-center bg-indigo-100 flex-1 h-screen">
+        <div className="hidden lg:flex items-center justify-center bg-indigo-100 flex-1 h-screen lg:mt-1.5">
           <div className="max-w-xs transform duration-200 hover:scale-110 cursor-pointer">
             <svg
               className="w-5/6 mx-auto"

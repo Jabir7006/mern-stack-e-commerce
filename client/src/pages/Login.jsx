@@ -28,7 +28,6 @@ const Login = () => {
       const response = await handleLogin(inputs);
       toast("✔️ " + response.message);
       dispatch(successLogin(response.payload));
-      localStorage.setItem("user", JSON.stringify(response.payload));
 
       navigate("/");
     } catch (error) {
@@ -39,7 +38,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="pb-8">
       {loading && (
         <div className="fixed top-0 left-0 bg-white w-full h-full flex justify-center items-center z-50">
           <div className="border-t-transparent border-solid animate-spin rounded-full border-blue-400 border-8 h-20 w-20" />

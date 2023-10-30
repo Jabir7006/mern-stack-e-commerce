@@ -11,7 +11,7 @@ export const handleRegister = async (userdata) => {
 
 export const handleActivate = async (accessToken) => {
   const response = await axios.post(`${baseUrl}/api/users/activate`, {
-    accessToken
+    accessToken,
   });
 
   return response.data;
@@ -19,6 +19,12 @@ export const handleActivate = async (accessToken) => {
 
 export const handleLogin = async (userdata) => {
   const response = await axios.post(`${baseUrl}/api/auth/login`, userdata);
+
+  return response.data;
+};
+
+export const handleLogout = async () => {
+  const response = await axios.get(`${baseUrl}/api/auth/logout`);
 
   return response.data;
 };

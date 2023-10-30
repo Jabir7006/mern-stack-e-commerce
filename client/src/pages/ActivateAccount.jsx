@@ -21,7 +21,7 @@ const ActivateAccount = () => {
         const response = await handleActivate(accessToken);
         toast.success(response.message);
         dispatch(successLogin(response.payload));
-        localStorage.setItem("user", JSON.stringify(response.payload));
+
         setTimeout(() => {
           navigate("/");
         }, 2000);
