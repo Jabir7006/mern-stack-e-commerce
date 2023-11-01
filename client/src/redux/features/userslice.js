@@ -48,10 +48,36 @@ const userslice = createSlice({
       state.user = null;
       state.error = action.payload;
     },
+
+    startUpdate: (state) => {
+      state.loading = true;
+    },
+
+    successUpdate: (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.error = null;
+
+      localStorage.setItem("user", JSON.stringify(state.user));
+    },
+
+    failUpdate: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export const { startLogin, successLogin, failLogin, startLogout, successLogout, failLogout } =
-  userslice.actions;
+export const {
+  startLogin,
+  successLogin,
+  failLogin,
+  startLogout,
+  successLogout,
+  failLogout,
+  startUpdate,
+  successUpdate,
+  failUpdate,
+} = userslice.actions;
 
 export default userslice.reducer;

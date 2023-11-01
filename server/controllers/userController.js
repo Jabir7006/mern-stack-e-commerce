@@ -91,6 +91,7 @@ const activateUser = async (req, res, next) => {
     const token = createJwt({ user }, process.env.SECRET_KEY, "30d");
 
     res.cookie("token", token, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
     return successResponse(res, {
@@ -120,40 +121,39 @@ const getUser = async (req, res, next) => {
 
 const updateUser = async (req, res, next) => {
   try {
+    const id = req.params.id;
     const { firstName, lastName } = req.body;
-    const user = req.user;
+    const findUser = await User.findById(id);
 
-    if (!user) {
-      throw createError(401, "please login or register first");
+    if (!findUser) {
+      throw createError(404, "User not found with this id");
     }
 
-    const updateUser = await User.findById(user._id);
-
-    if (!updateUser) {
-      throw createError(404, "User not found");
+    if (
+      findUser.image !== "public/images/users/default.png" &&
+      findUser.image !== "public/images/users/undefined" &&
+      req.file
+    ) {
+      const oldImagePath = path.join(__dirname, "..", findUser.image);
+      fs.unlinkSync(oldImagePath);
     }
 
-    // Check if a new image file is provided
-    if (req.file) {
-      // Delete the old image file
-      const oldImagePath = updateUser.image.replace("/images", "public/images");
-      fs.unlinkSync(path.resolve(__dirname, `../${oldImagePath}`));
+    const imagePath = req.file && `public/images/users/${req.file.filename}`;
 
-      // Set the new image path
-      updateUser.image = `public/images/users/${req.file.filename}`;
-    }
-
-    // Update other user information
-    updateUser.firstName = firstName;
-    updateUser.lastName = lastName;
-
-    // Save the updated user
-    const updatedUser = await updateUser.save();
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        image: imagePath,
+      },
+      { new: true }
+    );
 
     return successResponse(res, {
       statusCode: 200,
-      message: "user updated successfully",
-      payload: updatedUser,
+      message: "User updated successfully",
+      payload: user,
     });
   } catch (error) {
     next(error);

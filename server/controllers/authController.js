@@ -29,6 +29,7 @@ const loginUser = async (req, res, next) => {
     const token = createJwt({ user }, process.env.SECRET_KEY, "30d");
 
     res.cookie("token", token, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
 

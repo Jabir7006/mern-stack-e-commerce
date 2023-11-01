@@ -28,3 +28,9 @@ export const handleLogout = async () => {
 
   return response.data;
 };
+
+export const handleUpdateUser = async (userData, id) => {
+  const response = await axios.put(`${baseUrl}/api/users/update/${id}`, userData);
+
+  return response.data;
+};
