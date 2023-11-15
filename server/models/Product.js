@@ -33,24 +33,22 @@ const productSchema = new Schema(
     },
 
     image: {
-      type: array,
+      type: String,
       required: [true, "image is required"],
     },
 
     category: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
+      type: String,
       required: [true, "category is required"],
     },
 
     brand: {
-      type: Schema.Types.ObjectId,
-      ref: "Brand",
+      type: String,
       required: [true, "brand is required"],
     },
 
     inStock: {
-      type: Number,
+      type: Boolean,
       required: [true, "stock is required"],
     },
 
@@ -67,9 +65,10 @@ const productSchema = new Schema(
     sold: {
       type: Number,
       required: [true, "sold quantity is required"],
+      default: 0,
       validate: {
         validator: function (v) {
-          return v > 0;
+          return v >= 0;
         },
         message: "sold quantity must be greater than 0",
       },
@@ -82,6 +81,13 @@ const productSchema = new Schema(
         postedBy: { type: Schema.Types.ObjectId, ref: "User" },
       },
     ],
+
+    totalRatings: {
+      type: Number,
+      default: 0,
+    },
+
+
   },
   { timestamps: true }
 );

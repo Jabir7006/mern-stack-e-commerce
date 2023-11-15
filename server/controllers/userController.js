@@ -41,9 +41,12 @@ const registerUser = async (req, res, next) => {
       throw createError(409, "user already exists. please login");
     }
 
-    const imagePath = req.file
-      ? `public/images/users/${req.file.filename}`
-      : "public/images/users/default.png";
+    let imagePath = "public/images/users/default.png";
+
+    if (!userExists && req.file) {
+      imagePath = `public/images/users/${req.file.filename}`;
+    }
+
     const accessToken = createJwt(
       { firstName, lastName, email, password, image: imagePath },
       process.env.ACCESS_KEY,

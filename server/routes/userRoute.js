@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("../utils/imageUpload");
 const {
   getAllUsers,
   registerUser,
@@ -7,7 +8,7 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/userController");
-const upload = require("../utils/imageUpload");
+
 const { isLoggedIn, isLoggedOut } = require("../middlewares/auth");
 const userRoute = express.Router();
 

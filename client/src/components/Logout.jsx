@@ -73,6 +73,7 @@ const Logout = () => {
             <Link
               to="/profile"
               className="flex items-center p-3 -mt-2 text-sm text-gray-600 transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+              onClick={() => setIsOpen(false)}
             >
               <img
                 className="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9"
@@ -94,6 +95,7 @@ const Logout = () => {
             <Link
               to="/profile"
               className="flex items-center gap-2 px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+              onClick={() => setIsOpen(false)}
             >
               <AiOutlineUser size={20} />
               <span>View Profile</span>

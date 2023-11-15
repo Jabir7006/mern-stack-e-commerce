@@ -36,6 +36,12 @@ const userSchema = new Schema(
       type: String,
       default: "public/images/users/default.png",
     },
+
+    cart: {
+     type : Schema.Types.ObjectId,
+     ref: "Cart",
+    },
+
     isAdmin: {
       type: Boolean,
       default: false,

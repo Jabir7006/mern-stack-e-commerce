@@ -7,6 +7,9 @@ const createError = require("http-errors");
 const connectDB = require("./configs/db");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
+const productRoute = require("./routes/productRoute");
+const categoryRoute = require("./routes/categoryRoute");
+const seedRoute = require("./routes/seedRoute");
 require("dotenv").config();
 
 app.listen(process.env.PORT || 5000, async () => {
@@ -22,6 +25,10 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/products", productRoute);
+app.use("/api/seed", seedRoute);
+app.use("/api/categories", categoryRoute);
+
 
 // Client error handling
 app.use((req, res, next) => {

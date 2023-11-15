@@ -93,7 +93,7 @@ const Navbar = () => {
           </div>
 
           <Link to="/cart" className="flex items-center gap-1">
-            <PiShoppingCartSimple className="text-[1.5rem] lg:text-[28px]" />
+            <PiShoppingCartSimple className="text-[1.5rem] lg:text-[28px] text-yellow-400" />
             <div>
               <p className="bg-white rounded-full text-black font-bold text-center h-6 w-6 lg:h-6 lg:w-8">
                 0
@@ -137,7 +137,7 @@ const Navbar = () => {
       {/* thirdNav */}
 
       <div className="px-4 lg:bg-[#20303D]">
-        <div className="hidden lg:flex gap-6 py-3 font-medium z-10">
+        <div className="hidden lg:flex gap-6 py-3 z-10">
           <NavLink to="/">Home</NavLink>
           <NavLink to="/store">Store</NavLink>
           <NavLink to="/blogs">Blogs</NavLink>

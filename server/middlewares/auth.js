@@ -6,12 +6,26 @@ const isLoggedIn = async (req, res, next) => {
     const { token } = req.cookies;
 
     if (!token) {
-      throw createError(401, "you are not logged in. please login or register first");
+      throw createError(401, "please login or register first");
     }
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
     req.user = decoded.user;
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const isAdmin = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    if (user.isAdmin) {
+      throw createError(403, "you are not authorized to access this route");
+    }
 
     next();
   } catch (error) {
@@ -35,5 +49,6 @@ const isLoggedOut = async (req, res, next) => {
 
 module.exports = {
   isLoggedIn,
+  isAdmin,
   isLoggedOut,
 };
