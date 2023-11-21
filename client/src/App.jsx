@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Profile from './pages/Profile';
 import Register from "./pages/Register";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -24,7 +26,10 @@ function App() {
           <Route path="/api/users/activate" element={<ActivateAccount />} />
           <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/cart" element={<Cart />} />
           </Route>
+          <Route path="/product/:id" element={<ProductDetail />} />
+         
         </Routes>
       </BrowserRouter>
     </>

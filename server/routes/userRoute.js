@@ -7,6 +7,7 @@ const {
   getUser,
   updateUser,
   deleteUser,
+  addToCart,
 } = require("../controllers/userController");
 
 const { isLoggedIn, isLoggedOut } = require("../middlewares/auth");
@@ -18,5 +19,6 @@ userRoute.post("/activate", activateUser);
 userRoute.get("/profile/:id", isLoggedIn, getUser);
 userRoute.put("/update/:id", isLoggedIn, upload.single("image"), updateUser);
 userRoute.delete("/delete", isLoggedIn, deleteUser);
+
 
 module.exports = userRoute;

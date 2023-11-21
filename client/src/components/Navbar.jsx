@@ -10,6 +10,7 @@ import Logout from "./Logout";
 
 const Navbar = () => {
   const { user, loading } = useSelector((state) => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
   const [open, setOpen] = useState(false);
 
 
@@ -96,7 +97,7 @@ const Navbar = () => {
             <PiShoppingCartSimple className="text-[1.5rem] lg:text-[28px] text-yellow-400" />
             <div>
               <p className="bg-white rounded-full text-black font-bold text-center h-6 w-6 lg:h-6 lg:w-8">
-                0
+                {cartItems.length || 0}
               </p>
               <p className="text-[.9rem] lg:text-[1rem]">$0.00</p>
             </div>
