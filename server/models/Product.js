@@ -1,5 +1,7 @@
 const { Schema, model } = require("mongoose");
-
+const faker = require("faker");
+const mongoose = require("mongoose");
+const fs = require("fs");
 const productSchema = new Schema(
   {
     title: {
@@ -86,7 +88,6 @@ const productSchema = new Schema(
       type: Number,
       default: 0,
     },
-
   },
   { timestamps: true }
 );

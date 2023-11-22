@@ -16,18 +16,7 @@ body {
   font-family: "Rubik", sans-serif;
 }
 
-.swiper-pagination-bullet {
-  width: 10px; 
-  height: 10px;
-  background-color: white; 
-  margin: 0 8px; 
-}
-
-/* Active bullet style */
-.swiper-pagination-bullet-active {
-  background-color: gold; 
-}
-
 .active {
   color: #eab308;
 }
+

@@ -24,13 +24,11 @@ const getAllProducts = async (req, res, next) => {
     return successResponse(res, {
       statusCode: 200,
       payload: products,
-     
     });
   } catch (error) {
     next(error);
   }
 };
-
 
 const createProduct = async (req, res, next) => {
   try {
@@ -193,18 +191,15 @@ const rating = async (req, res) => {
         }
       );
     } else {
-      await Product.findByIdAndUpdate(
-        prodId,
-        {
-          $push: {
-            ratings: {
-              star: star,
-              comment: comment,
-              postedby: _id,
-            },
+      await Product.findByIdAndUpdate(prodId, {
+        $push: {
+          ratings: {
+            star: star,
+            comment: comment,
+            postedby: _id,
           },
-        }
-      );
+        },
+      });
     }
     const getallratings = await Product.findById(prodId);
     let totalRating = getallratings.ratings.length;
@@ -224,7 +219,6 @@ const rating = async (req, res) => {
     throw new Error(error);
   }
 };
-
 
 module.exports = {
   getAllProducts,

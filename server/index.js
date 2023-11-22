@@ -30,6 +30,8 @@ app.use("/api/seed", seedRoute);
 app.use("/api/categories", categoryRoute);
 
 
+
+
 // Client error handling
 app.use((req, res, next) => {
   next(createError(404, "Route not found"));

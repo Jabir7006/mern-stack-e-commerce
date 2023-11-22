@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { removeFromCart, } from '../redux/features/cartSlice';
+import { decrementQuantity, incrementQuantity, removeFromCart, } from '../redux/features/cartSlice';
 import { baseUrl } from '../services/userService';
+import { toast } from 'react-toastify';
 
 const Cart = () => {
   const { cartItems, quantity } = useSelector(state => state.cart);
+  const [shipping , setShipping] = useState(0)
   const { user } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const handleRemoveCart = (id) => {
@@ -14,6 +16,24 @@ const Cart = () => {
 
   
 
+  const total = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
+
+  useEffect(() => {
+    if (total >= 100) {
+      setShipping(0);
+    } else {
+      setShipping(parseFloat(4.99));
+    }
+  }, [total]);
+  
+
+  const handleIncrementQuantity = (id) => {
+    dispatch(incrementQuantity(id));
+  };
+
+  const handleDecrementQuantity = (id) => {
+    dispatch(decrementQuantity(id));
+  }
   return (
     <div>
       {cartItems.length === 0 && (
@@ -30,6 +50,7 @@ const Cart = () => {
             {/* Cart Items */}
             <div className="rounded-lg md:w-2/3">
               {cartItems.map((item) => (
+                
                 <div key={item._id} className="mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start">
                  
                   <img src={`${baseUrl}/${item.image}`} alt="product-image" className="w-full rounded-lg sm:w-40" />
@@ -40,9 +61,9 @@ const Cart = () => {
                     </div>
                     <div className="mt-4 flex justify-between sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
                       <div className="flex items-center border-gray-100">
-                        <span className="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50"> - </span>
-                        <input className="h-8 w-8 border bg-white text-center text-xs outline-none" type="number" defaultValue={2} min={1} />
-                        <span className="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50"> + </span>
+                        <button className="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50" onClick={() => handleDecrementQuantity(item._id)} disabled={item.quantity === 1}> - </button>
+                        <input className="h-8 w-8 border bg-white text-center text-xs outline-none" type="number" value={item.quantity} min={1}/>
+                        <button className="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50" onClick={() => handleIncrementQuantity(item._id)} disabled={item.inStock === false}> + </button>
                       </div>
                       <div className="flex items-center space-x-4">
                         <p className="text-sm">${item.price}</p>
@@ -69,17 +90,17 @@ const Cart = () => {
             <div className="mt-6 h-full rounded-lg border bg-white p-6 shadow-md md:w-1/3">
               <div className="mb-2 flex justify-between">
                 <p className="text-gray-700">Subtotal</p>
-                <p className="text-gray-700">$100</p>
+                <p className="text-gray-700">${total}</p>
               </div>
               <div className="flex justify-between">
                 <p className="text-gray-700">Shipping</p>
-                <p className="text-gray-700">$4.99</p>
+                <p className="text-gray-700">${shipping}</p>
               </div>
               <hr className="my-4" />
               <div className="flex justify-between">
                 <p className="text-lg font-bold">Total</p>
                 <div className="text-right">
-                  <p className="mb-1 text-lg font-bold">$133.97 USD</p>
+                  <p className="mb-1 text-lg font-bold">${total + shipping} USD</p>
                   <p className="text-sm text-gray-700">including VAT</p>
                 </div>
               </div>

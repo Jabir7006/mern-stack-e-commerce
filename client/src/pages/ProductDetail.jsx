@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { handleGetSingleProduct } from "../services/productService";
 import { baseUrl } from "../services/userService";
+import { useDispatch } from "react-redux";
+import { addToCart, decrementQuantity, incrementQuantity } from "../redux/features/cartSlice";
 
 const ProductDetail = () => {
 
@@ -10,7 +12,7 @@ const ProductDetail = () => {
     const [product, setProduct] = useState({});
     const [loading, setLoading] = useState(false);
    
-    console.log(product);
+    const dispatch = useDispatch()
 
     const getSingleProduct = async () => {
         try {
@@ -26,6 +28,19 @@ const ProductDetail = () => {
     useEffect(() => {
         getSingleProduct();
     },[])
+
+    const handleAddToCart = (product) => {
+      dispatch(addToCart(product))
+  };
+  
+
+  const handleIncrementQuantity = (id) => {
+    dispatch(incrementQuantity(id));
+  };
+
+  const handleDecrementQuantity = (id) => {
+    dispatch(decrementQuantity(id));
+  }
 
   return (
     <section className="overflow-hidden bg-white py-11 font-poppins dark:bg-gray-800">
@@ -123,7 +138,7 @@ const ProductDetail = () => {
                   <span>${product.price}</span>
                 
                 </p>
-                <p className="text-green-600 dark:text-green-300 ">{product.quantity} in stock</p>
+                <p className="text-green-600 dark:text-green-300 ">{product.inStock ? "in stock" : "out of stock"}</p>
               </div>
              {product.color && (
                 <div className="flex items-center mb-8">
@@ -166,22 +181,22 @@ const ProductDetail = () => {
                   Quantity
                 </label>
                 <div className="relative flex flex-row w-full h-10 mt-4 bg-transparent rounded-lg">
-                  <button className="w-20 h-full text-gray-600 bg-gray-300 rounded-l outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-400">
+                  <button className="w-20 h-full text-gray-600 bg-gray-300 rounded-l outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-400" onClick={() => handleDecrementQuantity(product._id)} disabled={product.quantity === 1}>
                     <span className="m-auto text-2xl font-thin">-</span>
                   </button>
                   <input
                     type="number"
                     className="flex items-center w-full font-semibold text-center text-gray-700 placeholder-gray-700 bg-gray-300 outline-none dark:text-gray-400 dark:placeholder-gray-400 dark:bg-gray-900 focus:outline-none text-md hover:text-black"
-                    placeholder={1}
+                    value={product.quantity}
                   />
-                  <button className="w-20 h-full text-gray-600 bg-gray-300 rounded-r outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-400">
+                  <button className="w-20 h-full text-gray-600 bg-gray-300 rounded-r outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-400" onClick={() => handleIncrementQuantity(product._id)} disabled={product.inStock === false}>
                     <span className="m-auto text-2xl font-thin">+</span>
                   </button>
                 </div>
               </div>
               <div className="flex flex-wrap items-center -mx-4 ">
                 <div className="w-full px-4 mb-4 lg:w-1/2 lg:mb-0">
-                  <button className="flex items-center justify-center w-full p-4 text-blue-500 border border-blue-500 rounded-md dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 hover:text-gray-100 dark:bg-blue-600 dark:hover:bg-blue-700 dark:hover:border-blue-700 dark:hover:text-gray-300">
+                  <button className="flex items-center justify-center w-full p-4 text-blue-500 border border-blue-500 rounded-md dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 hover:text-gray-100 dark:bg-blue-600 dark:hover:bg-blue-700 dark:hover:border-blue-700 dark:hover:text-gray-300" onClick={() => handleAddToCart(product)}>
                     Add to Cart
                   </button>
                 </div>

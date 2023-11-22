@@ -10,6 +10,7 @@ import Profile from './pages/Profile';
 import Register from "./pages/Register";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import Footer from "./components/Footer";
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -31,6 +32,7 @@ function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
          
         </Routes>
+        <Footer />
       </BrowserRouter>
     </>
   );
