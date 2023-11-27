@@ -13,7 +13,7 @@ const upload = require("../middlewares/productImgUpload");
 
 productRoute.get("/", getAllProducts);
 productRoute.post("/create", isLoggedIn, upload.single("image"), createProduct);
-productRoute.get("/:id", getSingleProduct);
+productRoute.get("/:slug", getSingleProduct);
 productRoute.put("/:id", isLoggedIn, upload.single("image"), updateProduct);
 productRoute.delete("/:id", deleteProduct);
 productRoute.put("/rating", isLoggedIn, rating);

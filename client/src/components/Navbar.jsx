@@ -1,20 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlineLogin } from "react-icons/ai";
 import { BsFillBagHeartFill, BsHeart } from "react-icons/bs";
-
+import { IoHomeOutline,IoStorefrontOutline } from "react-icons/io5";
+import { TbBrandBlogger } from "react-icons/tb";
+import { MdOutlineContactSupport } from "react-icons/md";
 import { LuMenu } from "react-icons/lu";
 import { PiShoppingCartSimple } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
+import { handleGetProducts } from "../services/productService";
+import { baseUrl } from "../services/userService";
 import Logout from "./Logout";
 
 const Navbar = () => {
   const { user, loading } = useSelector((state) => state.user);
   const { cartItems } = useSelector((state) => state.cart);
   const [open, setOpen] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [error, setError] = useState(null);
+const {products} = useSelector((state) => state.product);
   const total = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
 
+  const handleSearch = async (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+
+
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      try {
+        if (!searchQuery.trim()) {
+          setSearchResults([]);
+          return;
+        }
+        const response = await handleGetProducts(searchQuery);
+        setSearchResults(response.payload);
+        setError(null);
+      } catch (error) {
+        setError(error.response.data.message);
+      }
+    };
+
+    fetchSearchResults();
+
+  }, [searchQuery]);
 
   return (
     <header className="bg-[#111821] h-[10.6rem] lg:h-40 text-white">
@@ -24,27 +55,29 @@ const Navbar = () => {
         </div>
       )}
       {/* fistNav  */}
-      <div className="border-b border-gray-400 py-2 px-3 md:px-4">
+      <div className="border-b border-gray-400 py-1 md:py-2 px-3 md:px-4 lg:px-8">
         <div className="flex justify-between items-center h-7 text-[.9rem]">
-          <p className="text-[.85rem] md:text-[.92rem]">Free Shipping Over $100 & Free returns</p>
-          <p className="text-[.85rem] md:text-[.92rem]">Hotline : +123-456-789</p>
+          <p className="text-[.7rem] sm:text-[.85rem] md:text-[.92rem]">Free Shipping Over $100 & Free returns</p>
+          <p className="text-[.7rem] sm:text-[.85rem] md:text-[.92rem]">Hotline : +123-456-789</p>
         </div>
       </div>
 
       {/* secondNav */}
-      <div className="flex justify-between items-center px-4 py-3">
-        <Link to="/" className="font-semibold text-[1.2rem] lg:text-2xl flex items-center gap-3">
-          <BsFillBagHeartFill />
+      <div className="flex justify-between items-center gap-3 py-3 px-3 md:px-4 lg:px-8">
+        <Link to="/" className=" font-semibold text-[1.1rem] sm:text-[1.2rem] lg:text-2xl flex items-center gap-2">
+          <BsFillBagHeartFill className="text-yellow-400 mb-1"/>
           <h6>KizMart</h6>
         </Link>
 
         {/* search bar */}
 
-        <div className="hidden input-group relative md:flex w-full md:w-96 xl:w-[30rem]">
+        <div className="hidden input-group md:flex w-full md:w-96 xl:w-[35rem] relative">
           <input
             type="search"
             className="form-control relative flex-auto min-w-0 block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
             placeholder="Search"
+            value={searchQuery}
+            onChange={handleSearch}
             aria-label="Search"
             aria-describedby="button-addon2"
           />
@@ -70,9 +103,32 @@ const Navbar = () => {
               />
             </svg>
           </button>
+          {searchQuery && searchQuery.length > 0 && (
+            <div
+              className="absolute top-[36px] right-0 p-2 w-full bg-white z-[999] shadow-xl max-h-[400px] overflow-auto border-t"
+            >
+              {searchResults.length > 0 && !error && (
+                searchResults.map((product) => (
+                  <Link to={`/product/${product._id}`} key={product._id} className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600">
+                    <img
+                      src={`${product.image.startsWith("public/images/") ? baseUrl+"/"+ product.image : product.image}`}
+                      className="w-12 h-12"
+                      alt="product image"
+                    />
+                    <p>{product.title}</p>
+                  </Link>
+                ))
+              )}
+              {error && (
+                <div className="flex text-black p-3">
+                  <p>{error}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="flex gap-5 lg:gap-6 items-center">
+        <div className="flex gap-5 lg:gap-6 items-center ">
           <div className="flex items-center gap-2">
             {user ? (
               <Logout />
@@ -86,7 +142,7 @@ const Navbar = () => {
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-2">
             <BsHeart className="text-[1.1rem] lg:text-[25px]" />
             <Link to="/wishlist" className="text-[.91rem] lg:text-[1rem]">
               Wishlist
@@ -96,10 +152,10 @@ const Navbar = () => {
           <Link to="/cart" className="flex items-center gap-1">
             <PiShoppingCartSimple className="text-[1.5rem] lg:text-[28px] text-yellow-400" />
             <div>
-              <p className="bg-white rounded-full text-black font-bold text-center h-6 w-6 lg:h-6 lg:w-8">
+              <p className="bg-white rounded-full text-black font-semibold lg:font-bold text-center h-5 w-5 lg:h-6 lg:w-8">
                 {cartItems.length || 0}
               </p>
-              <p className="text-[.9rem] lg:text-[1rem]">${total.toFixed(2)}</p>
+              <p className="text-[.85rem] sm:text-[.9rem] lg:text-[1rem]">${total.toFixed(2)}</p>
             </div>
           </Link>
 
@@ -112,18 +168,29 @@ const Navbar = () => {
               }`}
             >
               <div className="flex flex-col justify-center items-center lg:hidden gap-6 z-10 fixed top-0 right-0 bg-[#20303D] w-1/2 p-4 h-full">
-                <NavLink to="/" onClick={() => setOpen(false)}>
-                  Home
-                </NavLink>
-                <NavLink to="/store" onClick={() => setOpen(false)}>
-                  Store
-                </NavLink>
-                <NavLink to="/blogs" onClick={() => setOpen(false)}>
-                  Blogs
-                </NavLink>
-                <NavLink to="/contact" onClick={() => setOpen(false)}>
-                  Contact
-                </NavLink>
+              <NavLink to="/" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
+          <IoHomeOutline />
+           <p>Home</p>
+          </NavLink>
+          <NavLink to="/store" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
+          <IoStorefrontOutline />
+           <p>Store</p>
+          </NavLink>
+          <NavLink to="/blogs" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
+          <TbBrandBlogger />
+           <p>Blogs</p>
+          </NavLink>
+          <NavLink to="/contact" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
+            <MdOutlineContactSupport />
+            <p>Contact</p>
+          </NavLink>
+
+                <NavLink to="/wishlist" className="flex md:hidden items-center gap-2">
+            <BsHeart className="text-[1.1rem] lg:text-[25px]" />
+            <p className="text-[.91rem] lg:text-[1rem]">
+              Wishlist
+            </p>
+          </NavLink>
               </div>
               <AiOutlineClose
                 size={22}
@@ -137,21 +204,35 @@ const Navbar = () => {
 
       {/* thirdNav */}
 
-      <div className="px-4 lg:bg-[#20303D]">
+      <div className="lg:bg-[#20303D] px-3 md:px-4 lg:px-8">
         <div className="hidden lg:flex gap-6 py-3 z-10">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/store">Store</NavLink>
-          <NavLink to="/blogs">Blogs</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
+          <NavLink to="/" className="flex items-center gap-1 hover:text-yellow-500 duration-300">
+          <IoHomeOutline />
+           <p>Home</p>
+          </NavLink>
+          <NavLink to="/store" className="flex items-center gap-1 hover:text-yellow-500 duration-300">
+          <IoStorefrontOutline />
+           <p>Store</p>
+          </NavLink>
+          <NavLink to="/blogs" className="flex items-center gap-1 hover:text-yellow-500 duration-300">
+          <TbBrandBlogger />
+           <p>Blogs</p>
+          </NavLink>
+          <NavLink to="/contact" className="flex items-center gap-1 hover:text-yellow-500 duration-300">
+            <MdOutlineContactSupport />
+            <p>Contact</p>
+          </NavLink>
         </div>
 
         <div className="">
-          <div className="input-group relative flex md:hidden w-full md:w-96 xl:w-[30rem]">
+          <div className="input-group relative flex md:hidden w-full">
             <input
               type="search"
               className="form-control relative flex-auto min-w-0 block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               placeholder="Search"
               aria-label="Search"
+              value={searchQuery}
+            onChange={handleSearch}
               aria-describedby="button-addon2"
             />
             <button
@@ -176,9 +257,36 @@ const Navbar = () => {
                 />
               </svg>
             </button>
+            {searchQuery && searchQuery.length > 0 && (
+            <div
+              className="absolute top-[37px] right-0 p-2 w-full bg-white z-[999] shadow-xl max-h-[320px] overflow-auto rounded-b-md"
+              onClick={() => setSearchQuery("")}
+            >
+              {searchResults.length > 0 && !error && (
+                searchResults.map((product) => (
+                  <Link to={`/product/${product._id}`} key={product._id} className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600">
+                    <img
+                      src={`${product.image.startsWith("public/images/") ? baseUrl+"/"+ product.image : product.image}`}
+                      className="w-12 h-12"
+                      alt="product image"
+                    />
+                    <p>{product.title}</p>
+                  </Link>
+                ))
+              )}
+              {error && (
+                <div className="flex text-black p-3">
+                  <p>{error}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          
           </div>
         </div>
       </div>
+      
     </header>
   );
 };

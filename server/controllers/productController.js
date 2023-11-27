@@ -10,7 +10,7 @@ const ApiFeatures = require("../utils/apiFeatures");
 const getAllProducts = async (req, res, next) => {
   try {
     const resPerPage = req.query.limit || 4;
-    const count = await Product.countDocuments();
+    
 
     const apiFeatures = new ApiFeatures(Product.find(), req.query)
       .search()
@@ -19,11 +19,17 @@ const getAllProducts = async (req, res, next) => {
       .pagination(resPerPage);
     const products = await apiFeatures.query;
 
+    const count = await Product.countDocuments();
+
     if (!products || products.length === 0) throw createError(404, "no products found");
 
     return successResponse(res, {
       statusCode: 200,
-      payload: products,
+      payload: {
+        products,
+        total : count,
+      },
+      
     });
   } catch (error) {
     next(error);
@@ -75,9 +81,9 @@ const createProduct = async (req, res, next) => {
 
 const getSingleProduct = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { slug } = req.params;
 
-    const product = await Product.findById(id);
+    const product = await Product.findOne({ slug });
 
     if (!product) {
       throw createError(404, "product not found");

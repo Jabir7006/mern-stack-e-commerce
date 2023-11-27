@@ -13,28 +13,28 @@ const Hero = () => {
           <img
             className="h-full max-w-full rounded-lg"
             src="https://img.pikbest.com/origin/06/04/44/45npIkbEsTdJc.jpg!w700wp"
-            alt
+            alt="hero"
           />
         </div>
         <div>
           <img
             className="h-full max-w-full rounded-lg"
             src="https://img.pikbest.com/origin/05/95/43/98xpIkbEsTInv.jpg!w700wp"
-            alt
+            alt="hero"
           />
         </div>
         <div>
           <img
             className="h-full max-w-full rounded-lg"
             src="https://wphix.com/template/topico-prev/topico/assets/img/banner/top/banner-top-4.jpg"
-            alt
+            alt="hero"
           />
         </div>
         <div>
           <img
             className="h-full max-w-full rounded-lg"
             src="https://wphix.com/template/topico-prev/topico/assets/img/banner/top/banner-top-1.jpg"
-            alt
+            alt="hero"
           />
         </div>
       </div>

@@ -3,12 +3,15 @@ import { baseUrl } from "./userService";
 axios.defaults.withCredentials = true;
 
 
-export const handleGetProducts = async () => {
-    const response = await axios.get(`${baseUrl}/api/products?limit=8`);
+export const handleGetProducts = async (search = "", category = "", limit = 8, page = 1, sort = "") => {
+    const response = await axios.get(`${baseUrl}/api/products?search=${search}&category=${category}&limit=${limit}&page=${page}&sort=${sort}`);
     return response.data;
 };
 
-export const handleGetSingleProduct = async (id) => {
-    const response = await axios.get(`${baseUrl}/api/products/${id}`);
+
+
+export const handleGetSingleProduct = async (slug) => {
+    const response = await axios.get(`${baseUrl}/api/products/${slug}`);
     return response.data;
 };
+

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { failLogin, startLogin, successLogin } from "../redux/features/userslice";
 import { handleLogin } from "../services/userService";
+import Loading from "../components/Loading";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
@@ -39,11 +40,7 @@ const Login = () => {
 
   return (
     <div className="pb-8">
-      {loading && (
-        <div className="fixed top-0 left-0 bg-white w-full h-full flex justify-center items-center z-50">
-          <div className="border-t-transparent border-solid animate-spin rounded-full border-blue-400 border-8 h-20 w-20" />
-        </div>
-      )}
+      {loading && <Loading />}
       <div className="lg:flex">
         <div className="lg:w-1/2 xl:max-w-screen-sm">
           <div className="py-8 lg:py-12 lg:bg-white flex justify-center lg:justify-start lg:px-12"></div>

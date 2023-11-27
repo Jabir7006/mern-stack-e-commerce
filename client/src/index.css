@@ -14,9 +14,16 @@
 
 body {
   font-family: "Rubik", sans-serif;
+  overflow-x: hidden;
 }
 
 .active {
   color: #eab308;
 }
 
+.max-lines-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

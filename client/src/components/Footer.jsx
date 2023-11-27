@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div className="bg-[#111821]">
+    <div className="bg-[#111821] px-3 md:px-4 lg:px-5">
         <footer className="rounded-lg shadow dark:bg-gray-900">
       <div className="w-full max-w-screen-xl mx-auto py-4 md:py-8">
         <div className="sm:flex sm:items-center sm:justify-between">
         <Link to="/" className="font-semibold text-[1.2rem] lg:text-2xl flex items-center gap-3 text-[#9fa2a8]">
           <BsFillBagHeartFill />
-          <h6>KizMart</h6>
+          <h6 className="py-4">KizMart</h6>
         </Link>
 
           <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">

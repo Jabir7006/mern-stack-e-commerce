@@ -5,10 +5,11 @@ import { handleGetSingleProduct } from "../services/productService";
 import { baseUrl } from "../services/userService";
 import { useDispatch } from "react-redux";
 import { addToCart, decrementQuantity, incrementQuantity } from "../redux/features/cartSlice";
+import Loading from "../components/Loading";
 
 const ProductDetail = () => {
 
-    const {id} = useParams();
+    const {slug} = useParams();
     const [product, setProduct] = useState({});
     const [loading, setLoading] = useState(false);
    
@@ -17,7 +18,7 @@ const ProductDetail = () => {
     const getSingleProduct = async () => {
         try {
           setLoading(true);
-          const response = await handleGetSingleProduct(id);
+          const response = await handleGetSingleProduct(slug);
           setProduct(response.payload);
           setLoading(false);
         } catch (error) {
@@ -43,21 +44,17 @@ const ProductDetail = () => {
   }
 
   return (
-    <section className="overflow-hidden bg-white py-11 font-poppins dark:bg-gray-800">
-       {loading && (
-        <div className="fixed top-0 left-0 bg-white w-full h-full flex justify-center items-center z-50">
-          <div className="border-t-transparent border-solid animate-spin rounded-full border-blue-400 border-8 h-20 w-20" />
-        </div>
-      )}
+    <section className="overflow-hidden py-11 font-poppins dark:bg-gray-800">
+       {loading && <Loading />}
       <div className="w-full px-4 py-4 mx-auto lg:py-8 md:px-6">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full px-4 md:w-1/2 ">
-            <div className="sticky top-0 z-50 overflow-hidden ">
+            <div className="sticky top-0 overflow-hidden z-10">
               <div className="relative mb-6 lg:mb-10 lg:h-2/4 ">
                 <img
-                  src={`${baseUrl}/${product?.image}`}
-                  alt
-                  className="object-cover w-full lg:h-full "
+                  src={`${product.image?.startsWith("https") ?  product.image : baseUrl+"/"+ product.image}`}
+                  alt="product image"
+                  className="object-cover w-full mx-auto lg:h-full "
                 />
               </div>
               
@@ -131,6 +128,7 @@ const ProductDetail = () => {
                   </ul>
                   <p className="text-xs dark:text-gray-400 ">( 2 customer reviews)</p>
                 </div>
+                <p className="max-w-md mb-8 text-gray-700 dark:text-gray-400">Category : {product.category}</p>
                 <p className="max-w-md mb-8 text-gray-700 dark:text-gray-400">
                   {product.description}
                 </p>
@@ -188,8 +186,10 @@ const ProductDetail = () => {
                     type="number"
                     className="flex items-center w-full font-semibold text-center text-gray-700 placeholder-gray-700 bg-gray-300 outline-none dark:text-gray-400 dark:placeholder-gray-400 dark:bg-gray-900 focus:outline-none text-md hover:text-black"
                     value={product.quantity}
+                    min={1}
                   />
-                  <button className="w-20 h-full text-gray-600 bg-gray-300 rounded-r outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-400" onClick={() => handleIncrementQuantity(product._id)} disabled={product.inStock === false}>
+                  <button className="w-20 h-full text-gray-600 bg-gray-300 rounded-r outline-none cursor-pointer dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-400" onClick={() => handleIncrementQuantity(product._id)}
+                          disabled={product.inStock === false}>
                     <span className="m-auto text-2xl font-thin">+</span>
                   </button>
                 </div>

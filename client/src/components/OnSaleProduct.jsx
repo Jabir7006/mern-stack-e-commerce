@@ -37,9 +37,11 @@ const OnSaleProduct = ({ products }) => {
 
       {/* Swiper component */}
       <Swiper
+      
         grid={{ rows: 2, fill: 'row' }}
         slidesPerView={3}
         spaceBetween={20}
+        
         breakpoints={{
           0: {
             slidesPerView: 1,
@@ -72,7 +74,9 @@ const OnSaleProduct = ({ products }) => {
       >
         {products.map((product) => (
            <SwiperSlide key={product._id} className='border-2 border-[#EBEBEB] hover:border-yellow-400 transition-all duration-200 p-3 flex'>
-              <img src={`${baseUrl}/${product.image}`} className='w-60 h-36 object-cover' alt="" />
+             <Link to={`/product/${product._id}`}>
+             <img src={`${product.image.startsWith("public/images/") ? baseUrl+"/"+ product.image : product.image}`} className='w-60 h-36 object-contain' alt="" />
+             </Link>
 
               <div>
                 <Link to={`/product/${product._id}`} className="text-base text-blue-600 hover:underline">{product.title}</Link>

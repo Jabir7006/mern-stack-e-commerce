@@ -40,14 +40,18 @@ const Logout = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+
   }, []);
+
+
+
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
   return (
     <>
-      <div className="relative inline-block">
+      <div className="relative inline-block ">
         {/* Dropdown toggle button */}
         <button
           onClick={toggleDropdown}
@@ -56,7 +60,7 @@ const Logout = () => {
           <div className="flex items-center gap-2">
             <img
               src={`${baseUrl}/${user?.image}`}
-              className="w-8 h-8 object-cover rounded-full"
+              className="w-8 h-8  object-cover rounded-full"
               alt=""
             />
             <span className="hidden lg:block mx-1 text-white">{user?.firstName + " " + user?.lastName}</span>
@@ -68,7 +72,7 @@ const Logout = () => {
         {isOpen && (
           <div
             ref={dropdownRef}
-            className="absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden origin-top-right bg-white rounded-md shadow-xl dark:bg-gray-800"
+            className="absolute left-0 md:right-0 z-20 w-56 py-2 mt-2 overflow-hidden origin-top-right bg-white rounded-md shadow-xl dark:bg-gray-800"
           >
             <Link
               to="/profile"
@@ -76,7 +80,7 @@ const Logout = () => {
               onClick={() => setIsOpen(false)}
             >
               <img
-                className="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9"
+                className="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9 border border-gray-300"
                 src={`${baseUrl}/${user?.image}`}
                 alt="avatar"
               />

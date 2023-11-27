@@ -24,6 +24,14 @@ class apiFeatures {
     const removeFields = ["search", "limit", "page", "sort"];
     removeFields.forEach((el) => delete queryCopy[el]);
 
+    // Check if the 'category' field exists and is not empty in the query string
+    if (queryCopy.category && queryCopy.category !== "") {
+      queryCopy.category = { $eq: queryCopy.category }; // Use $eq for exact match
+    } else {
+      // If 'category' is not defined or is empty, exclude the 'category' filter
+      delete queryCopy.category;
+    }
+
     let queryStr = JSON.stringify(queryCopy);
 
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);

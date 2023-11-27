@@ -23,10 +23,18 @@ const productSlice = createSlice({
       state.products = [];
       state.error = action.payload;
     },
+
+    setProductQuantity: (state, action) => {
+      const { productId, quantity } = action.payload;
+      const product = state.products.find((p) => p._id === productId);
+      if (product) {
+        product.quantity = quantity;
+      }
+    },
      
   }
 });
 
-export const { getProductStart, getProductSuccess, getProductFailure } = productSlice.actions;
+export const { getProductStart, getProductSuccess, getProductFailure,setProductQuantity } = productSlice.actions;
 
 export default productSlice.reducer;
