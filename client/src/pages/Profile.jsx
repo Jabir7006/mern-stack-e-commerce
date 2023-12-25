@@ -18,7 +18,11 @@ const Profile = () => {
           <div className="rounded  shadow p-6">
             <div className="flex justify-center mb-5 pt-4">
               <img
-                src={`${baseUrl}/${user?.image}`}
+               src={`${
+                user.image.startsWith("public/images/")
+                  ? baseUrl + "/" + user.image
+                  : user.image
+              }`}
                 alt="profile"
                 className="rounded-full w-32 h-32"
               />

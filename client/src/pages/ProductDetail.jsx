@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
+import { FaRegStar, FaStar } from "react-icons/fa";
+import Rating from "react-rating";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
+import Loading from "../components/Loading";
+import ProductReview from "../components/productReview";
+import { addToCart, decrementQuantity, incrementQuantity } from "../redux/features/cartSlice";
 import { handleGetSingleProduct } from "../services/productService";
 import { baseUrl } from "../services/userService";
-import { useDispatch } from "react-redux";
-import { addToCart, decrementQuantity, incrementQuantity } from "../redux/features/cartSlice";
-import Loading from "../components/Loading";
+import { addToWhishList } from "../redux/features/wishlistSlice";
 
 const ProductDetail = () => {
 
-    const {slug} = useParams();
+    const {id} = useParams();
     const [product, setProduct] = useState({});
     const [loading, setLoading] = useState(false);
    
@@ -18,7 +22,7 @@ const ProductDetail = () => {
     const getSingleProduct = async () => {
         try {
           setLoading(true);
-          const response = await handleGetSingleProduct(slug);
+          const response = await handleGetSingleProduct(id);
           setProduct(response.payload);
           setLoading(false);
         } catch (error) {
@@ -43,6 +47,10 @@ const ProductDetail = () => {
     dispatch(decrementQuantity(id));
   }
 
+  const handleAddToWishlist = (product) => {
+    dispatch(addToWhishList(product));
+  }
+
   return (
     <section className="overflow-hidden py-11 font-poppins dark:bg-gray-800">
        {loading && <Loading />}
@@ -53,8 +61,8 @@ const ProductDetail = () => {
               <div className="relative mb-6 lg:mb-10 lg:h-2/4 ">
                 <img
                   src={`${product.image?.startsWith("https") ?  product.image : baseUrl+"/"+ product.image}`}
-                  alt="product image"
-                  className="object-cover w-full mx-auto lg:h-full "
+                  alt="product image"  
+                  className="object-cover w-full mx-auto lg:max-h-[700px] lg:object-contain"
                 />
               </div>
               
@@ -68,67 +76,28 @@ const ProductDetail = () => {
                   {product.title}
                 </h2>
                 <div className="flex items-center mb-6">
-                  <ul className="flex mr-2">
-                    <li>
-                      <a href="#">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={16}
-                          height={16}
-                          fill="currentColor"
-                          className="w-4 mr-1 text-red-500 dark:text-gray-400 bi bi-star "
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                        </svg>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={16}
-                          height={16}
-                          fill="currentColor"
-                          className="w-4 mr-1 text-red-500 dark:text-gray-400 bi bi-star "
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                        </svg>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={16}
-                          height={16}
-                          fill="currentColor"
-                          className="w-4 mr-1 text-red-500 dark:text-gray-400 bi bi-star "
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                        </svg>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={16}
-                          height={16}
-                          fill="currentColor"
-                          className="w-4 mr-1 text-red-500 dark:text-gray-400 bi bi-star "
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z" />
-                        </svg>
-                      </a>
-                    </li>
-                  </ul>
-                  <p className="text-xs dark:text-gray-400 ">( 2 customer reviews)</p>
+                 <p>
+                 <p className="text-yellow-600 mt-5 mb-4">
+                            <Rating
+                              initialRating={product.totalRatings}
+                              emptySymbol={
+                                <i>
+                                  <FaRegStar />
+                                </i>
+                              }
+                              fullSymbol={
+                                <i>
+                                  <FaStar />
+                                </i>
+                              }
+                              readonly
+                            />
+                          </p>
+                 </p>
+                  <p className="text-xs dark:text-gray-400 ">(${product?.ratings?.length} customer reviews)</p>
                 </div>
-                <p className="max-w-md mb-8 text-gray-700 dark:text-gray-400">Category : {product.category}</p>
+                <p className="max-w-md mb-5 text-gray-700 dark:text-gray-400">Category : {product.category}</p>
+                <p className="max-w-md mb-8 text-gray-700 dark:text-gray-400">Brand : {product.brand}</p>
                 <p className="max-w-md mb-8 text-gray-700 dark:text-gray-400">
                   {product.description}
                 </p>
@@ -201,7 +170,7 @@ const ProductDetail = () => {
                   </button>
                 </div>
                 <div className="w-full px-4 mb-4 lg:mb-0 lg:w-1/2">
-                  <button className="flex items-center justify-center w-full p-4 text-blue-500 border border-blue-500 rounded-md dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 hover:text-gray-100 dark:bg-blue-600 dark:hover:bg-blue-700 dark:hover:border-blue-700 dark:hover:text-gray-300">
+                  <button className="flex items-center justify-center w-full p-4 text-blue-500 border border-blue-500 rounded-md dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 hover:text-gray-100 dark:bg-blue-600 dark:hover:bg-blue-700 dark:hover:border-blue-700 dark:hover:text-gray-300" onClick={() => handleAddToWishlist(product)}>
                     Add to wishlist
                   </button>
                 </div>
@@ -209,6 +178,8 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+        <ProductReview prodId={product._id} setProduct={setProduct} reviews={product.ratings}/>
+       
       </div>
     </section>
   );

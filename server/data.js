@@ -399,8 +399,177 @@ const data = {
       "totalRatings": 0
     },
 
+    {
+      "title": "SAMSUNG Galaxy A04e (SM-A042M/DS) Dual SIM 32GB, 6.5&quot; GSM Unlocked, International Version (32GB SD Card Bundle) - Light Blue",
+      "slug": "samsung-galaxy-a04e-sm-a042m-ds-dual-sim-32gb-6-5-gsm-unlocked-international-version-32gb-sd-card-bundle-light-blue",
+      "description" : "SAMSUNG Galaxy A04e (SM-A042M/DS) Dual SIM 32GB, 6.5&quot; GSM Unlocked, International Version (32GB SD Card Bundle) - Light Blue Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, dolore ipsum dolorem quis harum quam! Tempore adipisci cum reiciendis voluptates",
+      "price": 111.99,
+      "image": "https://m.media-amazon.com/images/I/71Nxq2DASeL._AC_SX444_SY639_QL65_.jpg",
+      "category": "smartphone",
+      "brand": "Samsung",
+      "inStock": true,
+      "quantity": 1,
+      "sold": 0,
+      "totalRatings": 86,
+    },
+
+    {
+      "title": "TracFone Motorola Moto g Pure, 32GB, Blue - Prepaid Smartphone (Locked)",
+      "slug": "tracfone-motorola-moto-g-pure-32gb-blue-prepaid-smartphone-locked",
+      "description": "TracFone Motorola Moto g Pure, 32GB, Blue - Prepaid Smartphone (Locked) Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, dolore ipsum dolorem quis harum quam! Tempore adipisci cum reiciendis voluptates",
+      "price": 39.99,
+      "image": "https://m.media-amazon.com/images/I/71zGrrAe5NL._AC_SX444_SY639_QL65_.jpg",
+      "category": "smartphone",
+      "brand": "Motorola",
+      "inStock": true,
+      "quantity": 1,
+      "sold": 0,
+      "totalRatings": 2454
+    },
+
+    {
+      "title": "Motorola Moto G 5G | 2023 | Unlocked | Made for US 4/128GB | 48 MPCamera | Ink Blue, 163.94x74.98x8.39",
+      "slug": "motorola-moto-g-5g-2023-unlocked-made-for-us-4-128gb-48-mpcamera-ink-blue",
+      "description": "Motorola Moto G 5G | 2023 | Unlocked | Made for US 4/128GB | 48 MPCamera | Ink Blue, 163.94x74.98x8.39 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, dolore ipsum dolorem quis harum quam! Tempore adipisci cum reiciendis voluptates",
+      "price": 179.99,
+      "image": "https://m.media-amazon.com/images/I/61vgbLrWDyL._AC_SX444_SY639_QL65_.jpg",
+      "category": "smartphone",
+      "brand": "Motorola",
+      "inStock": true,
+      "quantity": 1,
+      "sold": 0,
+      "totalRatings": 91
+    },
+    
+    {
+      "title": "Apple iPhone SE 2nd Generation, US Version, 64GB, Black - Unlocked (Renewed)",
+      "slug": "apple-iphone-se-2nd-generation-us-version-64gb-black-unlocked-renewed",
+      "description": "Apple iPhone SE 2nd Generation, US Version, 64GB, Black - Unlocked (Renewed) Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, dolore ipsum dolorem quis harum quam! Tempore adipisci cum reiciendis voluptates",
+      "price": 149.00,
+      "image": "https://m.media-amazon.com/images/I/813ovO0PGGL._AC_SX444_SY639_QL65_.jpg",
+      "category": "smartphone",
+      "brand": "Apple",
+      "inStock": true,
+      "quantity": 1,
+      "sold": 0,
+      "totalRatings": 14692
+    },
+    
+    {
+      "title": "VTech VS113-3 Extended Range 3 Handset Cordless Phone for Home with Call Blocking, Connect to Cell Bluetooth, 2\" Backlit Screen, Big Buttons, and Answering System, Silver & Black",
+      "slug": "vtech-vs113-3-extended-range-3-handset-cordless-phone-silver-black",
+      "description": "VTech VS113-3 Extended Range 3 Handset Cordless Phone for Home with Call Blocking, Connect to Cell Bluetooth, 2\" Backlit Screen, Big Buttons, and Answering System, Silver & Black Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, dolore ipsum dolorem quis harum quam! Tempore adipisci cum reiciendis voluptates",
+      "price": 69.97,
+      "image": "https://m.media-amazon.com/images/I/81lTDLSqg-L._AC_SX444_SY639_QL65_.jpg",
+      "category": "cordless phone",
+      "brand": "VTech",
+      "inStock": true,
+      "quantity": 1,
+      "sold": 0,
+      "totalRatings": 3620
+    },
+    
+    {
+      "title": "Apple iPhone 12, 64GB, Black - Fully Unlocked (Renewed)",
+      "slug": "apple-iphone-12-64gb-black-fully-unlocked-renewed",
+      "description": "Apple iPhone 12, 64GB, Black - Fully Unlocked (Renewed) Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, dolore ipsum dolorem quis harum quam! Tempore adipisci cum reiciendis voluptates",
+      "price": 319.99,
+      "image": "https://m.media-amazon.com/images/I/41bIlvE1rdL._AC_SX444_SY639_QL65_.jpg",
+      "category": "smartphone",
+      "brand": "Apple",
+      "inStock": true,
+      "quantity": 1,
+      "sold": 0,
+      "totalRatings": 13961
+    },
+    
+    {
+      "title": "TracFone Samsung Galaxy A03s, 32GB, Black - Prepaid Smartphone (Locked)",
+      "slug": "tracfone-samsung-galaxy-a03s-32gb-black-prepaid-smartphone-locked",
+      "description": "TracFone Samsung Galaxy A03s, 32GB, Black - Prepaid Smartphone (Locked) Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, dolore ipsum dolorem quis harum quam! Tempore adipisci cum reiciendis voluptates",
+      "price": 54.99,
+      "image": "https://m.media-amazon.com/images/I/812woqv69CL._AC_SX444_SY639_QL65_.jpg",
+      "category": "smartphone",
+      "brand": "Samsung",
+      "inStock": true,
+      "quantity": 1,
+      "sold": 0,
+      "totalRatings": 1336
+    },
+
+    {
+      "title": "Xiaomi Redmi A1 Unlocked 4G Volte Cellphone,2GB RAM + 32GB ROM,6.52\" Display, 8MP Camera,5000mAh Battery with 10W Fast Charging Smartphone (Blue)",
+      "slug": "xiaomi-redmi-a1-unlocked-4g-volte-cellphone-2gb-ram-32gb-rom-blue",
+      "description": "Xiaomi Redmi A1 Unlocked 4G Volte Cellphone,2GB RAM + 32GB ROM,6.52\" Display, 8MP Camera,5000mAh Battery with 10W Fast Charging Smartphone (Blue) Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur, dolore ipsum dolorem quis harum quam! Tempore adipisci cum reiciendis voluptates",
+      "price": 87.50,
+      "image": "https://m.media-amazon.com/images/I/615O0z6987L._AC_SX444_SY639_QL65_.jpg",
+      "category": "smartphone",
+      "brand": "Xiaomi",
+      "inStock": true,
+      "quantity": 1,
+      "sold": 0,
+      "totalRatings": 1215
+    },
+    
 
   ],
+
+  blogs : [
+    {
+      thumbnail: "https://res.cloudinary.com/dkzqijrkd/image/upload/v1703515704/ecommerce/blogs/mum091wa6xnr3nijgjtv.jpg",
+      title: "The Beauty of Nature",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius!",
+      author: "65891dc494cbddff63651c27",
+      category: "Nature",
+      tags: ["nature", "landscape"],
+  
+    },
+    {
+      thumbnail: "https://res.cloudinary.com/dkzqijrkd/image/upload/v1703515706/ecommerce/blogs/njyhxef6wq8pysz810sj.jpg",
+      title: "Tech Trends in 2023",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius!" ,
+      author: "65891dc494cbddff63651c27",
+      category: "Technology",
+      tags: ["tech", "innovation"],
+      
+    },
+    {
+      thumbnail: "https://res.cloudinary.com/dkzqijrkd/image/upload/v1703515707/ecommerce/blogs/ru64mapwijjgdvnhbqjt.jpg",
+      title: "Healthy Habits for a Balanced Life",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius!",
+      author: "65891dc494cbddff63651c27",
+      category: "Health",
+      tags: ["wellness", "fitness"],
+     
+    },
+
+    {
+      thumbnail: "https://res.cloudinary.com/dkzqijrkd/image/upload/v1703515707/ecommerce/blogs/kcshletgg7ag36yeq8nr.jpg",
+      title: "Discovering Ancient Civilizations",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius!",
+      author: "65891dc494cbddff63651c27",
+      category: "History",
+      tags: ["history", "archaeology"],
+     
+    },
+    {
+      thumbnail: "https://res.cloudinary.com/dkzqijrkd/image/upload/v1703515704/ecommerce/blogs/buftmzwh8vjqslofi7ut.jpg",
+      title: "Art and Creativity in Everyday Life",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius!",
+      author: "65891dc494cbddff63651c27",
+      category: "Art",
+      tags: ["art", "creativity"],
+      
+    },
+    {
+      thumbnail: "https://res.cloudinary.com/dkzqijrkd/image/upload/v1703515704/ecommerce/blogs/zjbhnu59ez3ucsxoi9hc.jpg",
+      title: "Exploring Underwater Wonders",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos illo recusandae veritatis porro! Doloribus tempore fugiat distinctio magnam vitae culpa excepturi animi nobis pariatur vero ab architecto maxime veniam facilis, adipisci, saepe dolor autem reprehenderit, voluptatibus consequuntur ullam. Eaque, eius!",
+      author: "65891dc494cbddff63651c27",
+      category: "Travel",
+      tags: ["travel", "underwater"],
+    },
+  ]
 };
 
 module.exports = data;

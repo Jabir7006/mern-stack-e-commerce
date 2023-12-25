@@ -58,7 +58,7 @@ const Cart = () => {
       {cartItems.length > 0 && (
         <div className='py-20'>
           <h1 className='mb-10 text-center text-2xl font-bold'>Cart Items</h1>
-          <div className='mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0'>
+          <div className='mx-auto max-w-6xl justify-center px-6 md:flex md:space-x-6 xl:px-0'>
             <div className='rounded-lg md:w-2/3'>
               {cartItems.map((item) => (
                 <div key={item._id} className='mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start gap-5'>
@@ -69,7 +69,7 @@ const Cart = () => {
                   />
                   <div className='sm:ml-4 sm:flex sm:w-full sm:justify-between'>
                     <div className='mt-5 sm:mt-0'>
-                      <h2 className='text-lg font-bold text-gray-900'>{item.title}</h2>
+                      <h2 className='text-lg font-bold text-gray-900 max-lines-2'>{item.title}</h2>
                       <p className='mt-1 text-xs text-gray-700'>
                         {item.description.length > 200 ? item.description.slice(0, 200) + '...' : item.description}
                       </p>

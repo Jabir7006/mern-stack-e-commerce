@@ -8,8 +8,8 @@ const connectDB = require("./configs/db");
 const userRoute = require("./routes/userRoute");
 const authRoute = require("./routes/authRoute");
 const productRoute = require("./routes/productRoute");
-const categoryRoute = require("./routes/categoryRoute");
 const seedRoute = require("./routes/seedRoute");
+const blogRoute = require("./routes/blogRoute");
 require("dotenv").config();
 
 app.listen(process.env.PORT || 5000, async () => {
@@ -27,7 +27,7 @@ app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
 app.use("/api/seed", seedRoute);
-app.use("/api/categories", categoryRoute);
+app.use("/api/blogs", blogRoute);
 
 
 

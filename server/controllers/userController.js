@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
+const cloudinary = require("../configs/cloudinary");
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -41,14 +42,10 @@ const registerUser = async (req, res, next) => {
       throw createError(409, "user already exists. please login");
     }
 
-    let imagePath = "public/images/users/default.png";
-
-    if (!userExists && req.file) {
-      imagePath = `public/images/users/${req.file.filename}`;
-    }
+    const image = req.file?.path
 
     const accessToken = createJwt(
-      { firstName, lastName, email, password, image: imagePath },
+      { firstName, lastName, email, password, image },
       process.env.ACCESS_KEY,
       "10m"
     );
@@ -85,6 +82,16 @@ const activateUser = async (req, res, next) => {
 
     if (userExists) {
       throw createError(409, "user already exists. please login");
+    }
+
+    //save image to cloudinary
+     const image = decoded.image;
+    if(image && image !== "public/images/users/default.png") {
+       const response = await cloudinary.uploader.upload(image, {
+        folder : "ecommerce/users"
+       })
+
+       decoded.image = response.secure_url;
     }
 
     const newUser = new User(decoded);
@@ -133,22 +140,36 @@ const updateUser = async (req, res, next) => {
     }
 
     if (
-      findUser.image !== "public/images/users/default.png" &&
-      findUser.image !== "public/images/users/undefined" &&
-      req.file
+      findUser.image !== "public/images/users/default.png" && req.file
     ) {
-      const oldImagePath = path.join(__dirname, "..", findUser.image);
-      fs.unlinkSync(oldImagePath);
+     const pathSegment = findUser.image.split("/");
+     const lastSegment = pathSegment[pathSegment.length - 1];
+     
+     const publicId = lastSegment.split(".")[0];
+     
+     const {result} = await cloudinary.uploader.destroy(`ecommerce/users/${publicId}`);
+
+     if(result !== "ok"){
+      throw createError(500, "image not deleted successfully. please try again");
+     }
+
     }
 
-    const imagePath = req.file && `public/images/users/${req.file.filename}`;
+    let image;
+
+    if(req.file){
+     const response = await cloudinary.uploader.upload(req.file.path, {
+        folder: "ecommerce/users",
+      })
+      image = response.secure_url
+    }
 
     const user = await User.findByIdAndUpdate(
       id,
       {
         firstName,
         lastName,
-        image: imagePath,
+        image: image,
       },
       { new: true }
     );

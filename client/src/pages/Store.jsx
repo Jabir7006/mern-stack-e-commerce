@@ -7,7 +7,7 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { IoGitCompareOutline } from "react-icons/io5";
@@ -15,18 +15,17 @@ import { LuEye } from "react-icons/lu";
 import Rating from "react-rating";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { addToCart } from "../redux/features/cartSlice";
+import Loading from "../components/Loading";
+import Paginate from "../components/Pagination";
+import ProductModal from "../components/ProductModal";
+import { UserContext } from "../context/userContext";
 import {
   getProductFailure,
   getProductStart,
   getProductSuccess,
 } from "../redux/features/productSlice";
-import { handleGetProducts } from "../services/productService";
+import { handleGetAllCategories, handleGetProducts } from "../services/productService";
 import { baseUrl } from "../services/userService";
-import Paginate from "../components/Pagination";
-import Loading from "../components/Loading";
-import { categories } from './../data';
 
 const sortOptions = [
   { name: "Most Popular", href: "#", current: true },
@@ -59,11 +58,26 @@ const filters = [
     id: "category",
     name: "Category",
     options: [
-      { value: "new-arrivals", label: "New Arrivals", checked: false },
-      { value: "sale", label: "Sale", checked: false },
-      { value: "travel", label: "Travel", checked: true },
-      { value: "organization", label: "Organization", checked: false },
-      { value: "accessories", label: "Accessories", checked: false },
+      {
+        value: "men's clothing",
+        label: "Men's Clothing",
+        checked: false,
+      },
+      {
+        value: "women's clothing",
+        label: "Women's Clothing",
+        checked: false,
+      },
+      {
+        value: "jewelery",
+        label: "Jewelery",
+        checked: false,
+      },
+      {
+        value: "electronics",
+        label: "Electronics",
+        checked: false,
+      },
     ],
   },
   {
@@ -94,24 +108,40 @@ export default function Store() {
   const [activePage, setActivePage] = useState(1);
   const [itemsCountPerPage, setItemsCountPerPage] = useState(12);
   const [totalItemsCount, setTotalItemsCount] = useState(0);
+  const [loadMore, setLoadMore] = useState(6);
+  const [loadMoreBrands, setLoadMoreBrands] = useState(6);
   const [category, setCategory] = useState("");
-  const [brand, setBrand] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCat, setSelectedCat] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState([]);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
-const categorySlice = categories.slice(0, 5);
-
-  const handleAddToCart = (product) => {
-    if (user) {
-      dispatch(addToCart(product));
-    } else {
-      toast.error("Please login first");
-      navigate("/login");
-    }
-  };
+  const { handleAddToCart, handleAddToWishlist, showModal, setShowModal, setModalProd } =
+    useContext(UserContext);
+  useEffect(() => {
+    const getAllCategories = async () => {
+      try {
+        const response = await handleGetAllCategories();
+        setCategories(response.payload.categories);
+        setBrands(response.payload.brands);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getAllCategories();
+  }, [products]);
 
   const getAllProducts = async () => {
     try {
       dispatch(getProductStart());
-      const response = await handleGetProducts("", category, itemsCountPerPage, activePage, "-createdAt");
+      const response = await handleGetProducts({
+        category: category ? category : selectedCat.join(","),
+        brand: selectedBrand.join(","),
+        limit: itemsCountPerPage,
+        page: activePage,
+      });
       dispatch(getProductSuccess(response.payload.products));
       setTotalItemsCount(response.payload.total);
     } catch (error) {
@@ -121,17 +151,58 @@ const categorySlice = categories.slice(0, 5);
 
   useEffect(() => {
     getAllProducts();
-  }, [activePage, itemsCountPerPage, category]);
+  }, [activePage, itemsCountPerPage, category, selectedCat, selectedBrand]);
 
   const handleFilterByCategory = (e) => {
-      e.preventDefault()
-      setCategory(e.target.value)
-      console.log(category)
+    e.preventDefault();
+    const selectedCategory = e.target.value;
+
+    // Check if the category is already selected
+    const categoryIndex = selectedCat.indexOf(selectedCategory);
+
+    if (categoryIndex === -1) {
+      // If not selected, add it to the array
+      setSelectedCat((prevCategories) => [...prevCategories, selectedCategory]);
+    } else {
+      // If already selected, remove it from the array
+      setSelectedCat((prevCategories) => [
+        ...prevCategories.slice(0, categoryIndex),
+        ...prevCategories.slice(categoryIndex + 1),
+      ]);
+    }
   };
-  
+
+  const handleFilterByBrand = (e) => {
+    e.preventDefault();
+    const selectedBrands = e.target.value;
+
+    // Check if the category is already selected
+    const brandIndex = selectedBrand.indexOf(selectedBrands);
+
+    if (brandIndex === -1) {
+      // If not selected, add it to the array
+      setSelectedBrand((prevBrand) => [...prevBrand, selectedBrands]);
+    } else {
+      // If already selected, remove it from the array
+      setSelectedBrand((prevBrand) => [
+        ...prevBrand.slice(0, brandIndex),
+        ...prevBrand.slice(brandIndex + 1),
+      ]);
+    }
+  };
+
+  const priceOptions = [
+    { min: "0", max: "25", label: "$0 - $25", checked: false },
+    { min: "25", max: "50", label: "$25 - $50", checked: false },
+    { min: "50", max: "75", label: "$50 - $75", checked: false },
+    { min: "75", max: "100", label: "$75 - $100", checked: false },
+    { min: "100", label: "$100+", checked: false },
+  ];
 
   return (
     <div className="px-3 md:px-4 lg:px-8">
+      {showModal && <ProductModal />}
+
       <h1 className="text-center max-[350px]:hidden text-[#2b2c2c] min-[350px]:block text-2xl md:text-3xl font-bold pt-8 md:-mb-4">
         Our Store
       </h1>
@@ -322,65 +393,238 @@ const categorySlice = categories.slice(0, 5);
                   role="list"
                   className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
                 >
-                   <li>
-                      <button value="" onClick={handleFilterByCategory}>All</button>
-                    </li>
-                  {categorySlice.map((category) => (
-                    <li key={category.name} >
-                      <button value={category.value} onClick={handleFilterByCategory}>{category.name}</button>
+                  <li>
+                    <button
+                      value=""
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCategory("");
+                      }}
+                    >
+                      All
+                    </button>
+                  </li>
+                  {categories.slice(0, 5)?.map((category) => (
+                    <li key={category}>
+                      <button
+                        className="hover:border-b duration-300 border-yellow-500 capitalize"
+                        value={category}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setCategory(e.target.value);
+                        }}
+                      >
+                        {category}
+                      </button>
                     </li>
                   ))}
                 </ul>
 
-                {filters.map((section) => (
-                  <Disclosure as="div" key={section.id} className="border-b border-gray-200 py-6">
-                    {({ open }) => (
-                      <>
-                        <h3 className="-my-3 flow-root">
-                          <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                            <span className="font-medium text-gray-900">{section.name}</span>
-                            <span className="ml-6 flex items-center">
-                              {open ? (
-                                <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                              ) : (
-                                <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                              )}
-                            </span>
-                          </Disclosure.Button>
-                        </h3>
-                        <Disclosure.Panel className="pt-6">
-                          <div className="space-y-4">
-                            {section.options.map((option, optionIdx) => (
-                              <div key={option.value} className="flex items-center">
-                                <input
-                                  id={`filter-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  defaultValue={option.value}
-                                  type="checkbox"
-                                  defaultChecked={option.checked}
-                                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                />
-                                <label
-                                  htmlFor={`filter-${section.id}-${optionIdx}`}
-                                  className="ml-3 text-sm text-gray-600"
-                                >
-                                  {option.label}
-                                </label>
-                              </div>
-                            ))}
+                {/* //category Filter// */}
+
+                <Disclosure as="div" className="border-b border-gray-200 py-6">
+                  {({ open }) => (
+                    <>
+                      <h3 className="-my-3 flow-root">
+                        <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                          <span className="font-medium text-gray-900">Category</span>
+                          <span className="ml-6 flex items-center">
+                            {open ? (
+                              <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                            ) : (
+                              <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                            )}
+                          </span>
+                        </Disclosure.Button>
+                      </h3>
+                      <Disclosure.Panel className="pt-6">
+                        <div className="space-y-4">
+                          {categories.slice(0, loadMore).map((category, index) => (
+                            <div key={index} className="flex items-center">
+                              <input
+                                id={category}
+                                name={category}
+                                value={category}
+                                onChange={handleFilterByCategory}
+                                type="checkbox"
+                                checked={selectedCat.includes(category)}
+                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                              />
+                              <label
+                                htmlFor={category}
+                                className="ml-3 text-sm text-gray-600 capitalize"
+                              >
+                                {category}
+                              </label>
+                            </div>
+                          ))}
+
+                          <div className="flex justify-between items-center">
+                            {categories.length > loadMore && (
+                              <button
+                                type="button"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                onClick={() => setLoadMore((prev) => prev + 5)}
+                              >
+                                Load More
+                              </button>
+                            )}
+                            {selectedCat.length > 0 && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedCat([]);
+                                }}
+                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                              >
+                                reset
+                              </button>
+                            )}
                           </div>
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
-                ))}
+                        </div>
+                      </Disclosure.Panel>
+                    </>
+                  )}
+                </Disclosure>
+
+                {/* //brands filter// */}
+
+                <Disclosure as="div" className="border-b border-gray-200 py-6">
+                  {({ open }) => (
+                    <>
+                      <h3 className="-my-3 flow-root">
+                        <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500 transition-all ">
+                          <span className="font-medium text-gray-900">Brands</span>
+                          <span className="ml-6 flex items-center">
+                            {open ? (
+                              <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                            ) : (
+                              <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                            )}
+                          </span>
+                        </Disclosure.Button>
+                      </h3>
+                      <Disclosure.Panel className="pt-6">
+                        <div className="space-y-4">
+                          {brands.slice(0, loadMoreBrands).map((brand, index) => (
+                            <div key={index} className="flex items-center">
+                              <input
+                                id={brand}
+                                name={brand}
+                                value={brand}
+                                onChange={handleFilterByBrand}
+                                type="checkbox"
+                                checked={selectedBrand.includes(brand)}
+                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                              />
+                              <label
+                                htmlFor={brand}
+                                className="ml-3 text-sm text-gray-600 capitalize"
+                              >
+                                {brand}
+                              </label>
+                            </div>
+                          ))}
+                          <div className="flex justify-between items-center">
+                            {brands?.length > loadMoreBrands ? (
+                              <button
+                                type="button"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                onClick={() => setLoadMoreBrands((prev) => prev + 5)}
+                              >
+                                Load More
+                              </button>
+                            ) : null}
+                            {selectedBrand.length > 0 && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedBrand([]);
+                                }}
+                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                              >
+                                reset
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </Disclosure.Panel>
+                    </>
+                  )}
+                </Disclosure>
+
+                {/* //Price filter// */}
+
+                <Disclosure as="div" className="border-b border-gray-200 py-6">
+                  {({ open }) => (
+                    <>
+                      <h3 className="-my-3 flow-root">
+                        <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500 transition-all ">
+                          <span className="font-medium text-gray-900">Price</span>
+                          <span className="ml-6 flex items-center">
+                            {open ? (
+                              <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                            ) : (
+                              <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                            )}
+                          </span>
+                        </Disclosure.Button>
+                      </h3>
+                      <Disclosure.Panel className="pt-6">
+                        <div className="space-y-4">
+                          {priceOptions.map((price, index) => (
+                            <div key={index} className="flex items-center">
+                              <input
+                                id={price.label}
+                                name={price.label}
+                                min={Number(price.min)}
+                                max={Number(price.max)}
+                                // onChange={handleFilterByPrice}
+                                type="checkbox"
+                                // checked={selectedBrand.includes(brand)}
+                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                              />
+                              <label
+                                htmlFor={price.label}
+                                className="ml-3 text-sm text-gray-600 capitalize"
+                              >
+                                {price.label}
+                              </label>
+                            </div>
+                          ))}
+                          <div className="flex justify-between items-center">
+                            {brands?.length > loadMoreBrands ? (
+                              <button
+                                type="button"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                onClick={() => setLoadMoreBrands((prev) => prev + 5)}
+                              >
+                                Load More
+                              </button>
+                            ) : null}
+                            {selectedBrand.length > 0 && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedBrand([]);
+                                }}
+                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                              >
+                                reset
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </Disclosure.Panel>
+                    </>
+                  )}
+                </Disclosure>
               </form>
 
               {/* Product grid */}
               <div className="lg:col-span-3 sm:px-3">
-                {
-                  !error ? (
-                    <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-x-5 xl:grid-cols-4 justify-center">
+                {!error ? (
+                  <div className="grid grid-cols-2 gap-5 md:grid-cols-3 md:gap-x-5 xl:grid-cols-4 justify-center">
                     {products.map((product) => (
                       <div
                         key={product._id}
@@ -388,7 +632,7 @@ const categorySlice = categories.slice(0, 5);
                       >
                         <div className="mySwiper">
                           <div className="relative overflow-hidden group">
-                            <Link to={`/product/${product.slug}`}>
+                            <Link to={`/product/${product._id}`}>
                               <img
                                 src={`${
                                   product.image.startsWith("public/images/")
@@ -399,12 +643,21 @@ const categorySlice = categories.slice(0, 5);
                                 alt=""
                               />
                             </Link>
-  
+
                             <div className="flex justify-center items-center gap-1 sm:gap-2 absolute left-0 right-0 top-44 transition-all duration-300 group-hover:top-28">
-                              <button className="bg-white border-2 border-[#EBEBEB] shadow-md p-2 rounded-full hover:text-white hover:bg-yellow-400 duration-300">
+                              <button
+                                className="bg-white border-2 border-[#EBEBEB] shadow-md p-2 rounded-full hover:text-white hover:bg-yellow-400 duration-300"
+                                onClick={() => handleAddToWishlist(product)}
+                              >
                                 <IoMdHeartEmpty className="text-[17px] sm:text-[20px] md:text-[24px]" />
                               </button>
-                              <button className="bg-white border-2 border-[#EBEBEB] shadow-md p-2 rounded-full hover:text-white hover:bg-yellow-400 duration-300">
+                              <button
+                                className="bg-white border-2 border-[#EBEBEB] shadow-md p-2 rounded-full hover:text-white hover:bg-yellow-400 duration-300"
+                                onClick={() => {
+                                  setShowModal(true);
+                                  setModalProd(product);
+                                }}
+                              >
                                 <LuEye className="text-[15px] min-[320px]:text-[17px] sm:text-[20px] md:text-[24px]" />
                               </button>
                               <button className="bg-white border-2 border-[#EBEBEB] shadow-md p-2 rounded-full hover:text-white hover:bg-yellow-400 duration-300">
@@ -413,7 +666,7 @@ const categorySlice = categories.slice(0, 5);
                             </div>
                           </div>
                           <Link
-                            to={`/product/${product.slug}`}
+                            to={`/product/${product._id}`}
                             className="text-blue-700 hover:underline cursor-pointer text-[.85rem] min-[320px]:text-[.88rem] min-[420px]:text-[.9rem] sm:text-[.97rem] max-lines-2 overflow-hidden"
                           >
                             {product.title.length > 40 ? (
@@ -427,7 +680,7 @@ const categorySlice = categories.slice(0, 5);
                               product.title
                             )}
                           </Link>
-  
+
                           <p className="text-yellow-600 mt-5 mb-4">
                             <Rating
                               initialRating={product.totalRatings}
@@ -444,9 +697,9 @@ const categorySlice = categories.slice(0, 5);
                               readonly
                             />
                           </p>
-  
+
                           <h6 className="font-semibold">${product.price}</h6>
-  
+
                           <button
                             className="bg-yellow-500 text-white px-4 py-3 sm:px-7 sm:py-3 rounded-full text-[12px] uppercase hover:bg-black hover:text-white transition-all translate-y-[100px] duration-300 group-hover:translate-y-[-40px]"
                             onClick={() => handleAddToCart(product)}
@@ -457,13 +710,11 @@ const categorySlice = categories.slice(0, 5);
                       </div>
                     ))}
                   </div>
-                  )
-                  : (
-                    <div className="flex justify-center items-center">
-                      <h3 className="text-3xl">{error}</h3>
-                    </div>
-                  )
-                }
+                ) : (
+                  <div className="flex justify-center items-center">
+                    <h3 className="text-3xl">{error}</h3>
+                  </div>
+                )}
               </div>
             </div>
           </section>

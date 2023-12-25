@@ -4,13 +4,15 @@ const successResponse = require("./successController");
 const slugify = require("slugify");
 const fs = require("fs");
 const path = require("path");
-const Category = require("../models/Category");
+
 const ApiFeatures = require("../utils/apiFeatures");
+const cloudinary = require("../configs/cloudinary");
+
 
 const getAllProducts = async (req, res, next) => {
   try {
-    const resPerPage = req.query.limit || 4;
-    
+    const resPerPage = req.query.limit || 8;
+    const count = await Product.countDocuments();
 
     const apiFeatures = new ApiFeatures(Product.find(), req.query)
       .search()
@@ -19,18 +21,32 @@ const getAllProducts = async (req, res, next) => {
       .pagination(resPerPage);
     const products = await apiFeatures.query;
 
-    const count = await Product.countDocuments();
-
     if (!products || products.length === 0) throw createError(404, "no products found");
 
     return successResponse(res, {
       statusCode: 200,
       payload: {
         products,
-        total : count,
+       total: count,
       },
-      
+     
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllCategoriesAndBrands = async (req, res, next) => {
+  try {
+    const categories = await Product.find().select("category -_id").select("brand -_id");
+   
+    return successResponse(res, {
+      statusCode: 200,
+      payload: {
+        categories: [ ...new Set(categories.map((item) => item.category))],
+        brands: [ ...new Set(categories.map((item) => item.brand))],
+      }
+    })
   } catch (error) {
     next(error);
   }
@@ -53,14 +69,22 @@ const createProduct = async (req, res, next) => {
 
     const slug = slugify(title, { lower: true });
 
-    const imagePath = `public/images/products/${req.file.filename}`;
+    const image = req.file?.path;
+
+    if(image) {
+       const response = await cloudinary.uploader.upload(image, {
+        folder : "ecommerce/products"
+       })
+
+       req.body.image = response.secure_url
+    }
 
     const newProduct = new Product({
       title,
       slug,
       description,
       price,
-      image: imagePath,
+      image,
       category,
       brand,
       inStock,
@@ -81,9 +105,9 @@ const createProduct = async (req, res, next) => {
 
 const getSingleProduct = async (req, res, next) => {
   try {
-    const { slug } = req.params;
+    const { id } = req.params;
 
-    const product = await Product.findOne({ slug });
+    const product = await Product.findById(id).populate("ratings.postedBy", "firstName lastName image");
 
     if (!product) {
       throw createError(404, "product not found");
@@ -116,12 +140,30 @@ const updateProduct = async (req, res, next) => {
       slug = slugify(title, { lower: true });
     }
 
-    if (getProduct.image !== "public/images/products/undefined" && req.file) {
-      const oldImagePath = path.join(__dirname, "..", getProduct.image);
-      fs.unlinkSync(oldImagePath);
+    if (
+      findUser.image !== "public/images/users/default.png" && req.file
+    ) {
+     const pathSegment = findUser.image.split("/");
+     const lastSegment = pathSegment[pathSegment.length - 1];
+     
+     const publicId = lastSegment.split(".")[0];
+     
+     const {result} = await cloudinary.uploader.destroy(`ecommerce/users/${publicId}`);
+
+     if(result !== "ok"){
+      throw createError(500, "image not deleted successfully. please try again");
+     }
+
     }
 
-    const imagePath = req.file && `public/images/products/${req.file.filename}`;
+    let image;
+
+    if(req.file){
+     const response = await cloudinary.uploader.upload(req.file.path, {
+        folder: "ecommerce/users",
+      })
+      image = response.secure_url
+    }
 
     const product = await Product.findByIdAndUpdate(
       id,
@@ -130,7 +172,7 @@ const updateProduct = async (req, res, next) => {
         slug: slug,
         description,
         price,
-        image: imagePath,
+        image,
         category,
         brand,
         inStock,
@@ -179,18 +221,18 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
-const rating = async (req, res) => {
+const rating = async (req, res,next) => {
   const { _id } = req.user;
   const { star, prodId, comment } = req.body;
   try {
     const product = await Product.findById(prodId);
     let alreadyRated = product.ratings.find(
-      (userId) => userId.postedby.toString() === _id.toString()
+      (userId) => userId.postedBy.toString() === _id.toString()
     );
     if (alreadyRated) {
       await Product.updateOne(
         {
-          ratings: { $elemMatch: { postedby: _id } },
+          ratings: { $elemMatch: { postedBy: _id } },
         },
         {
           $set: { "ratings.$.star": star, "ratings.$.comment": comment },
@@ -202,32 +244,45 @@ const rating = async (req, res) => {
           ratings: {
             star: star,
             comment: comment,
-            postedby: _id,
+            postedBy: _id,
           },
         },
       });
     }
-    const getallratings = await Product.findById(prodId);
-    let totalRating = getallratings.ratings.length;
-    let ratingsum = getallratings.ratings
+
+
+    
+    const getAllRatings = await Product.findById(prodId);
+    let totalRatings = getAllRatings.ratings.length;
+    let ratingSum = getAllRatings.ratings
       .map((item) => item.star)
       .reduce((prev, curr) => prev + curr, 0);
-    let actualRating = Math.round(ratingsum / totalRating);
-    let finalproduct = await Product.findByIdAndUpdate(
+    let actualRating = Math.round(ratingSum / totalRatings);
+    let finalProduct = await Product.findByIdAndUpdate(
       prodId,
       {
-        totalrating: actualRating,
+        totalRatings: actualRating,
       },
       { new: true }
     );
-    res.json(finalproduct);
+
+  const findUpdatedProduct = await Product.findById(prodId).populate("ratings.postedBy", "firstName lastName image");
+ 
+   return successResponse(res, {
+     statusCode: 200,
+     message: "Thanks For Feedback",
+     payload: findUpdatedProduct,
+   })
   } catch (error) {
-    throw new Error(error);
+    console.error(error)
+     next(error)
   }
 };
 
+
 module.exports = {
   getAllProducts,
+  getAllCategoriesAndBrands,
   createProduct,
   getSingleProduct,
   updateProduct,

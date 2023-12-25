@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Marquee from "react-fast-marquee";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,6 +17,7 @@ import {
 } from "../redux/features/productSlice";
 import { handleGetProducts } from "../services/productService";
 import Loading from "../components/Loading";
+import { UserContext } from "../context/userContext";
 
 
 
@@ -24,7 +25,7 @@ const Home = () => {
   const { products, loading } = useSelector((state) => state.product);
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [open, setOpen] = useState(false);
+  const {handleAddToCart} = useContext(UserContext)
 
  
 
@@ -32,7 +33,7 @@ const Home = () => {
     const getProducts = async () => {
       try {
         dispatch(getProductStart());
-        const response = await handleGetProducts('', '', 10, 1, 'createdAt');
+        const response = await handleGetProducts({ limit : 10, page : 1, sort : "createdAt"});
 
         dispatch(getProductSuccess(response.payload.products));
       } catch (error) {
@@ -44,17 +45,9 @@ const Home = () => {
 
     getProducts();
   }, []);
-  const navigate = useNavigate();
 
-  const handleAddToCart = (product) => {
-  if(user){
-      dispatch(addToCart(product));
-    }else{
-      toast.error("Please login first");
-      navigate("/login");
-    }
-    
-  }
+
+ 
 
   return (
   <main className="py-8 px-3 md:px-4 lg:px-8 overflow-x-hidden">
@@ -77,8 +70,7 @@ const Home = () => {
           <Products
             key={product._id}
             product={product}
-            setOpen={setOpen}
-            handleAddToCart={handleAddToCart}
+      
           />
         ))}
       </div>
@@ -102,7 +94,7 @@ const Home = () => {
         </div>
         
 
-        <OfferProduct products={products} handleAddToCart={handleAddToCart}/>
+        <OfferProduct products={products} />
      
         <div className="flex flex-col md:flex-row gap-5 mt-14">
           <Link to="/store">
@@ -138,6 +130,8 @@ const Home = () => {
       <img src="images/brand-08.png" className="mr-12 w-24" alt="" />
      </Marquee>
      
+
+     <div></div>
      
     </main>
   );

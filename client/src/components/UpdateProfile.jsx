@@ -61,7 +61,12 @@ const UpdateProfile = () => {
         <div className="flex justify-center mb-5 pt-4">
           <label htmlFor="image" className="relative">
             <img
-              src={selectedImage || `${baseUrl}/${user?.image}`}
+              src={`${ selectedImage ? selectedImage :
+                user.image.startsWith("public/images/")
+                  ? baseUrl + "/" + user.image
+                  : user.image
+              }`}
+              
               alt="profile"
               className="rounded-full group w-32 h-32 cursor-pointer hover:opacity-40 transition-all"
             />

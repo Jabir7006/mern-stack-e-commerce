@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { baseUrl } from '../services/userService';
 import Rating from 'react-rating';
@@ -6,13 +6,15 @@ import { FaRegStar, FaStar } from 'react-icons/fa';
 import { IoGitCompareOutline } from 'react-icons/io5';
 import { LuEye } from 'react-icons/lu';
 import { IoMdHeartEmpty } from 'react-icons/io';
+import ProductModal from './ProductModal';
+import { UserContext } from '../context/userContext';
 
 
-const OfferProduct = ({products, handleAddToCart}) => {
+const OfferProduct = ({products}) => {
   const sliceProduct = products.slice(1, 3);
 
      const [remainingTime, setRemainingTime] = useState({ days: 10, hours: 0, minutes: 0, seconds: 0 });
-   
+     const {showModal, setShowModal, setModalProd, handleAddToCart} = useContext(UserContext)
      useEffect(() => {
        const endTime = new Date().getTime() + remainingTime.days * 24 * 60 * 60 * 1000;
        const interval = setInterval(() => {
@@ -37,7 +39,8 @@ const OfferProduct = ({products, handleAddToCart}) => {
      
 
   return (
-    <div className='py-20 '>
+    <div className='py-20'>
+      
       <span className='flex justify-between'>
       <h4 className="font-medium text-xl md:text-[1.5rem] lg:text-2xl mb-5 mt-12">Deals <span className='text-red-600'>Of The Day</span></h4>
        <h4 className="font-medium text-xl md:text-[1.5rem] lg:text-2xl mb-5 mt-12">Electronic & Digital</h4>
@@ -86,6 +89,7 @@ const OfferProduct = ({products, handleAddToCart}) => {
       <div className="flex flex-col md:flex-row gap-5">
        {sliceProduct.map((product) => (
        <div className="border-2 border-[#EBEBEB] hover:border-yellow-400 transition-all duration-200 p-5 w-full h-full md:h-[400px] md:w-[300px] text-center overflow-hidden group" key={product._id}>
+        {showModal && <ProductModal setShowModal={setShowModal} product={product} handleAddToCart={handleAddToCart}/>}
        <div className="mySwiper">
          <div className="relative overflow-hidden group">
            <Link to={`/product/${product._id}`} className='relative'>
@@ -103,6 +107,10 @@ const OfferProduct = ({products, handleAddToCart}) => {
              </button>
              <button
                className="bg-white border-2 border-[#EBEBEB] shadow-md p-2 rounded-full hover:text-white hover:bg-yellow-400 duration-300"
+               onClick={() => {
+                 setShowModal(true);
+                 setModalProd(product);
+               }} 
              >
                <LuEye size={26} />
              </button>

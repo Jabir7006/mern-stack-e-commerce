@@ -24,12 +24,28 @@ class apiFeatures {
     const removeFields = ["search", "limit", "page", "sort"];
     removeFields.forEach((el) => delete queryCopy[el]);
 
-    // Check if the 'category' field exists and is not empty in the query string
+    // Filter by category
     if (queryCopy.category && queryCopy.category !== "") {
-      queryCopy.category = { $eq: queryCopy.category }; // Use $eq for exact match
+      if (queryCopy.category.includes(',')) {
+        const categories = queryCopy.category.split(",");
+        queryCopy.category = { $in: categories };
+      } else {
+        queryCopy.category = { $eq: queryCopy.category };
+      }
     } else {
-      // If 'category' is not defined or is empty, exclude the 'category' filter
       delete queryCopy.category;
+    }
+
+    // Filter by brand
+    if (queryCopy.brand && queryCopy.brand !== "") {
+      if (queryCopy.brand.includes(',')) {
+        const brands = queryCopy.brand.split(",");
+        queryCopy.brand = { $in: brands };
+      } else {
+        queryCopy.brand = { $eq: queryCopy.brand };
+      }
+    } else {
+      delete queryCopy.brand;
     }
 
     let queryStr = JSON.stringify(queryCopy);
@@ -39,6 +55,7 @@ class apiFeatures {
     this.query = this.query.find(JSON.parse(queryStr));
     return this;
   }
+  
 
   sort() {
     if (this.queryString.sort) {

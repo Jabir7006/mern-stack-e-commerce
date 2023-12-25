@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineClose, AiOutlineLogin } from "react-icons/ai";
 import { BsFillBagHeartFill, BsHeart } from "react-icons/bs";
-import { IoHomeOutline,IoStorefrontOutline } from "react-icons/io5";
-import { TbBrandBlogger } from "react-icons/tb";
-import { MdOutlineContactSupport } from "react-icons/md";
+import { IoHomeOutline, IoStorefrontOutline } from "react-icons/io5";
 import { LuMenu } from "react-icons/lu";
+import { MdOutlineContactSupport } from "react-icons/md";
 import { PiShoppingCartSimple } from "react-icons/pi";
+import { TbBrandBlogger } from "react-icons/tb";
 import { useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import { handleGetProducts } from "../services/productService";
@@ -19,33 +19,41 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState(null);
-const {products} = useSelector((state) => state.product);
-  const total = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0);
+  const { products } = useSelector((state) => state.product);
+  const { whishListItems } = useSelector((state) => state.whishList);
+  const total = cartItems.reduce((acc, { quantity, price }) => acc + quantity * price, 0);
 
-  const handleSearch = async (e) => {
-    setSearchQuery(e.target.value);
-  };
+  const handleSearch = async (e) => setSearchQuery(e.target.value);
 
-
+  const searchContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        if (!searchQuery.trim()) {
-          setSearchResults([]);
-          return;
-        }
-        const response = await handleGetProducts(searchQuery);
-        setSearchResults(response.payload);
+        const response = await handleGetProducts({search : searchQuery});
+        setSearchResults(response.payload.products);
         setError(null);
       } catch (error) {
-        setError(error.response.data.message);
+        setError(error.response?.data?.message || "An error occurred");
       }
     };
 
     fetchSearchResults();
-
   }, [searchQuery]);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target)) {
+        setSearchQuery(""); // Close search suggestions
+      }
+    };
+
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <header className="bg-[#111821] h-[10.6rem] lg:h-40 text-white">
@@ -71,7 +79,7 @@ const {products} = useSelector((state) => state.product);
 
         {/* search bar */}
 
-        <div className="hidden input-group md:flex w-full md:w-96 xl:w-[35rem] relative">
+        <div className="hidden input-group md:flex w-full md:w-96 xl:w-[35rem] relative" ref={searchContainerRef}>
           <input
             type="search"
             className="form-control relative flex-auto min-w-0 block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -112,7 +120,7 @@ const {products} = useSelector((state) => state.product);
                   <Link to={`/product/${product._id}`} key={product._id} className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600">
                     <img
                       src={`${product.image.startsWith("public/images/") ? baseUrl+"/"+ product.image : product.image}`}
-                      className="w-12 h-12"
+                      className="max-w-12 h-12"
                       alt="product image"
                     />
                     <p>{product.title}</p>
@@ -142,11 +150,22 @@ const {products} = useSelector((state) => state.product);
             )}
           </div>
 
-          <div className="hidden sm:flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-2 ">
+            <div className="relative">
             <BsHeart className="text-[1.1rem] lg:text-[25px]" />
+            {whishListItems && whishListItems.length > 0 && (
+              <span className="absolute top-0 end-0 inline-flex items-center w-3.5 h-3.5 rounded-full border-2 border-white text-xs font-medium transform -translate-y-1/2 translate-x-1/2 bg-yellow-500 text-white dark:border-slate-900">
+              <span className="sr-only">Badge value</span>
+            </span>
+            )}
+            </div>
+           
             <Link to="/wishlist" className="text-[.91rem] lg:text-[1rem]">
               Wishlist
+              
             </Link>
+           
+
           </div>
 
           <Link to="/cart" className="flex items-center gap-1">
@@ -167,7 +186,7 @@ const {products} = useSelector((state) => state.product);
                 open ? "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 lg:hidden" : ""
               }`}
             >
-              <div className="flex flex-col justify-center items-center lg:hidden gap-6 z-10 fixed top-0 right-0 bg-[#20303D] w-1/2 p-4 h-full">
+              <div className="flex flex-col justify-center items-center lg:hidden gap-6 z-10 fixed top-0 right-0 bg-[#20303D] w-[60%] p-4 h-full">
               <NavLink to="/" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
           <IoHomeOutline />
            <p>Home</p>
@@ -185,7 +204,7 @@ const {products} = useSelector((state) => state.product);
             <p>Contact</p>
           </NavLink>
 
-                <NavLink to="/wishlist" className="flex md:hidden items-center gap-2">
+                <NavLink to="/wishlist" className="flex md:hidden items-center gap-1 hover:text-yellow-500 duration-300">
             <BsHeart className="text-[1.1rem] lg:text-[25px]" />
             <p className="text-[.91rem] lg:text-[1rem]">
               Wishlist
@@ -199,7 +218,7 @@ const {products} = useSelector((state) => state.product);
               />
             </div>
           )}
-        </div>
+        </div>                                                                          
       </div>
 
       {/* thirdNav */}

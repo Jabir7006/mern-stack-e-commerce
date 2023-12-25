@@ -6,16 +6,20 @@ const {
   updateProduct,
   deleteProduct,
   rating,
+  deleteReview,
+  getAllCategoriesAndBrands,
 } = require("../controllers/productController");
 const { isLoggedIn } = require("../middlewares/auth");
 const productRoute = express.Router();
-const upload = require("../middlewares/productImgUpload");
+const {uploadProductImage} = require("../middlewares/imageUpload");
 
 productRoute.get("/", getAllProducts);
-productRoute.post("/create", isLoggedIn, upload.single("image"), createProduct);
-productRoute.get("/:slug", getSingleProduct);
-productRoute.put("/:id", isLoggedIn, upload.single("image"), updateProduct);
-productRoute.delete("/:id", deleteProduct);
+productRoute.get("/categories", getAllCategoriesAndBrands);
 productRoute.put("/rating", isLoggedIn, rating);
+productRoute.post("/create", isLoggedIn, uploadProductImage.single("image"), createProduct);
+productRoute.get("/:id", getSingleProduct);
+productRoute.put("/:id", isLoggedIn, uploadProductImage.single("image"), updateProduct);
+productRoute.delete("/:id", deleteProduct);
+
 
 module.exports = productRoute;

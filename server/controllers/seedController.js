@@ -1,36 +1,30 @@
 const data = require("../data");
+const Blog = require("../models/Blog");
 const Product = require("../models/Product");
 const successResponse = require("./successController");
-const faker = require("faker");
+const cloudinary = require("../configs/cloudinary");
 
-// const generateDummyProducts = async () => {
-//   const dummyProducts = [];
-
-//   for (let i = 0; i < 100; i++) {
-//     const product = {
-//       title: faker.commerce.productName(),
-//       slug: faker.lorem.slug(),
-//       description: faker.lorem.paragraph(),
-//       price: faker.commerce.price(),
-//       image: faker.image.urlLoremFlickr({ category: 'animals' }), // Unique placeholder image URL
-//       category: faker.commerce.department(),
-//       brand: faker.company.companyName(),
-//       inStock: faker.datatype.boolean(),
-//       quantity: faker.datatype.number({ min: 1, max: 100 }),
-//     };
-
-//     dummyProducts.push(product);
-//   }
-
-//   return dummyProducts;
-// };
 
 const seedProduct = async (req, res, next) => {
   try {
-    // const dummyProducts = await generateDummyProducts();
+ 
     await Product.deleteMany({});
 
-    const products = await Product.insertMany(data.products);
+    const products = await Promise.all(
+      data.products.map(async (product) => {
+        // Upload image to Cloudinary
+        const result = await cloudinary.uploader.upload(product.image, {
+          folder: "ecommerce/products", // Optional: You can organize your images into folders
+        });
+
+        // Update the product object with the Cloudinary URL
+        product.image = result.secure_url;
+
+        // Create the product in the database
+        return Product.create(product);
+      })
+    );
+
 
     return successResponse(res, {
       statusCode: 200,
@@ -41,4 +35,22 @@ const seedProduct = async (req, res, next) => {
   }
 };
 
-module.exports = { seedProduct };
+
+const seedBlog = async (req, res, next) => {
+  try {
+    await Blog.deleteMany({});
+
+    const blogs = await Blog.insertMany(data.blogs);
+
+    return successResponse(res, {
+      statusCode: 200,
+      payload: blogs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+module.exports = { seedProduct, seedBlog };
