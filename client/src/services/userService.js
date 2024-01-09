@@ -1,7 +1,7 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-export const baseUrl = "http://localhost:3000";
+export const baseUrl = "https://mern-ecommerce-app-backend-jkkk.onrender.com";
 
 export const handleRegister = async (userdata) => {
   const response = await axios.post(`${baseUrl}/api/users/register`, userdata);
