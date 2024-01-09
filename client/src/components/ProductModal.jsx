@@ -9,7 +9,7 @@ const ProductModal = () => {
   const {setShowModal, handleAddToCart, modalProd} = useContext(UserContext)
 
   return (
-   <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-[999]">
+   <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-[99999]">
   <div className="w-[90%] max-w-6xl max-h-[90vh] rounded bg-white p-10 lg:p-20 mx-auto text-gray-800 relative md:text-left">
   <button className='absolute top-5 right-5 text-3xl cursor-pointer' onClick={() => setShowModal(false)}>
   <IoIosCloseCircleOutline />

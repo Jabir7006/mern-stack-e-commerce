@@ -28,71 +28,13 @@ import { handleGetAllCategories, handleGetProducts } from "../services/productSe
 import { baseUrl } from "../services/userService";
 
 const sortOptions = [
-  { name: "Most Popular", href: "#", current: true },
-  { name: "Best Rating", href: "#", current: false },
-  { name: "Newest", href: "#", current: false },
-  { name: "Price: Low to High", href: "#", current: false },
-  { name: "Price: High to Low", href: "#", current: false },
+  { name: "Most Popular", value: "popularity", current: true },
+  { name: "Best Rating", value: "-totalRatings" , current: false },
+  { name: "Newest", value: "createdAt", current: false },
+  { name: "Price: Low to High", value: "price", current: false },
+  { name: "Price: High to Low", value: "-price", current: false },
 ];
-const subCategories = [
-  { name: "Totes", href: "#" },
-  { name: "Backpacks", href: "#" },
-  { name: "Travel Bags", href: "#" },
-  { name: "Hip Bags", href: "#" },
-  { name: "Laptop Sleeves", href: "#" },
-];
-const filters = [
-  {
-    id: "color",
-    name: "Color",
-    options: [
-      { value: "white", label: "White", checked: false },
-      { value: "beige", label: "Beige", checked: false },
-      { value: "blue", label: "Blue", checked: true },
-      { value: "brown", label: "Brown", checked: false },
-      { value: "green", label: "Green", checked: false },
-      { value: "purple", label: "Purple", checked: false },
-    ],
-  },
-  {
-    id: "category",
-    name: "Category",
-    options: [
-      {
-        value: "men's clothing",
-        label: "Men's Clothing",
-        checked: false,
-      },
-      {
-        value: "women's clothing",
-        label: "Women's Clothing",
-        checked: false,
-      },
-      {
-        value: "jewelery",
-        label: "Jewelery",
-        checked: false,
-      },
-      {
-        value: "electronics",
-        label: "Electronics",
-        checked: false,
-      },
-    ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
-  },
-];
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -117,6 +59,8 @@ export default function Store() {
   const [selectedBrand, setSelectedBrand] = useState([]);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [sort, setSort] = useState("");
+
 
   const { handleAddToCart, handleAddToWishlist, showModal, setShowModal, setModalProd } =
     useContext(UserContext);
@@ -141,6 +85,7 @@ export default function Store() {
         brand: selectedBrand.join(","),
         limit: itemsCountPerPage,
         page: activePage,
+        sort: sort,
       });
       dispatch(getProductSuccess(response.payload.products));
       setTotalItemsCount(response.payload.total);
@@ -151,7 +96,8 @@ export default function Store() {
 
   useEffect(() => {
     getAllProducts();
-  }, [activePage, itemsCountPerPage, category, selectedCat, selectedBrand]);
+    console.log(sort)
+  }, [activePage, itemsCountPerPage, category, selectedCat, selectedBrand, sort]);
 
   const handleFilterByCategory = (e) => {
     e.preventDefault();
@@ -190,6 +136,11 @@ export default function Store() {
       ]);
     }
   };
+
+  const handleSorting = (e) => {
+    e.preventDefault();
+    setSort(e.target.value);
+  }
 
   const priceOptions = [
     { min: "0", max: "25", label: "$0 - $25", checked: false },
@@ -249,27 +200,46 @@ export default function Store() {
                   {/* Filters */}
                   <form className="mt-4 border-t border-gray-200">
                     <h3 className="sr-only">Categories</h3>
-                    <ul role="list" className="px-2 py-3 font-medium text-gray-900">
-                      {subCategories.map((category) => (
-                        <li key={category.name}>
-                          <a href={category.href} className="block px-2 py-3">
-                            {category.name}
-                          </a>
+                    <ul role="list" className="px-2 py-3 text-gray-900">
+                    <li className="px-2">
+                    <button
+                      value=""
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCategory("");
+                      }}
+                    >
+                      All
+                    </button>
+                  </li>
+                      {categories.slice(0, 5)?.map((category) => (
+                        <li key={category}>
+                          <button
+                            value={category}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setCategory(e.target.value);
+                            }}
+                            className="block px-2 py-3"
+                          >
+                            {category}
+                          </button>
                         </li>
                       ))}
                     </ul>
 
-                    {filters.map((section) => (
+                    {/* //mobile category filter// */}
+
                       <Disclosure
                         as="div"
-                        key={section.id}
+                       
                         className="border-t border-gray-200 px-4 py-6"
                       >
                         {({ open }) => (
                           <>
                             <h3 className="-mx-2 -my-3 flow-root">
                               <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                                <span className="font-medium text-gray-900">{section.name}</span>
+                                <span className="font-medium text-gray-900">Categories</span>
                                 <span className="ml-6 flex items-center">
                                   {open ? (
                                     <MinusIcon className="h-5 w-5" aria-hidden="true" />
@@ -281,30 +251,129 @@ export default function Store() {
                             </h3>
                             <Disclosure.Panel className="pt-6">
                               <div className="space-y-6">
-                                {section.options.map((option, optionIdx) => (
-                                  <div key={option.value} className="flex items-center">
+                              {categories.slice(0, loadMore).map((category, index) => (
+                                  <div key={index} className="flex items-center">
                                     <input
-                                      id={`filter-mobile-${section.id}-${optionIdx}`}
-                                      name={`${section.id}[]`}
-                                      defaultValue={option.value}
+                                      id={category}
+                                      name={category}
+                                      value={category}
+                                      onChange={handleFilterByCategory}
                                       type="checkbox"
-                                      defaultChecked={option.checked}
+                                      checked={selectedCat.includes(category)}
                                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                     />
                                     <label
-                                      htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
+                                      htmlFor={category}
                                       className="ml-3 min-w-0 flex-1 text-gray-500"
                                     >
-                                      {option.label}
+                                      {category}
                                     </label>
                                   </div>
                                 ))}
+                                 <div className="flex justify-between items-center">
+                            {categories.length > loadMore && (
+                              <button
+                                type="button"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                onClick={() => setLoadMore((prev) => prev + 5)}
+                              >
+                                Load More
+                              </button>
+                            )}
+                            {selectedCat.length > 0 && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedCat([]);
+                                }}
+                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                              >
+                                reset
+                              </button>
+                            )}
+                          </div>
                               </div>
                             </Disclosure.Panel>
                           </>
                         )}
+
+                        
                       </Disclosure>
-                    ))}
+
+                    {/* //mobile brand filter// */}
+                      
+                    <Disclosure
+                        as="div"
+                       
+                        className="border-t border-gray-200 px-4 py-6"
+                      >
+                        {({ open }) => (
+                          <>
+                            <h3 className="-mx-2 -my-3 flow-root">
+                              <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
+                                <span className="font-medium text-gray-900">Brands</span>
+                                <span className="ml-6 flex items-center">
+                                  {open ? (
+                                    <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                  ) : (
+                                    <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                  )}
+                                </span>
+                              </Disclosure.Button>
+                            </h3>
+                            <Disclosure.Panel className="pt-6">
+                              <div className="space-y-6">
+                              {brands.slice(0, loadMore).map((brand, index) => (
+                                  <div key={index} className="flex items-center">
+                                    <input
+                                      id={brand}
+                                      name={brand}
+                                      value={brand}
+                                      onChange={handleFilterByBrand}
+                                      type="checkbox"
+                                      checked={selectedBrand.includes(brand)}
+                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                    />
+                                    <label
+                                      htmlFor={brand}
+                                      className="ml-3 min-w-0 flex-1 text-gray-500"
+                                    >
+                                      {brand}
+                                    </label>
+                                  </div>
+                                ))}
+                                 <div className="flex justify-between items-center">
+                            {brands.length > loadMore && (
+                              <button
+                                type="button"
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                onClick={() => setLoadMore((prev) => prev + 5)}
+                              >
+                                Load More
+                              </button>
+                            )}
+                            {selectedBrand.length > 0 && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setSelectedBrand([]);
+                                }}
+                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                              >
+                                reset
+                              </button>
+                            )}
+                          </div>
+                              </div>
+                            </Disclosure.Panel>
+                          </>
+                        )}
+
+                        
+                      </Disclosure>
+
+                {/* //mobile price filter// */}
+                
                   </form>
                 </Dialog.Panel>
               </Transition.Child>
@@ -344,8 +413,9 @@ export default function Store() {
                       {sortOptions.map((option) => (
                         <Menu.Item key={option.name}>
                           {({ active }) => (
-                            <a
-                              href={option.href}
+                            <button
+                              value={option.value}
+                              onClick={handleSorting}
                               className={classNames(
                                 option.current ? "font-medium text-gray-900" : "text-gray-500",
                                 active ? "bg-gray-100" : "",
@@ -353,7 +423,7 @@ export default function Store() {
                               )}
                             >
                               {option.name}
-                            </a>
+                            </button>
                           )}
                         </Menu.Item>
                       ))}

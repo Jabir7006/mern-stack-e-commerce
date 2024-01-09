@@ -17,6 +17,8 @@ import Register from "./pages/Register";
 import Store from "./pages/Store";
 import Wishlist from "./pages/Wishlist";
 import { UserProvider } from "./context/userContext";
+import Checkout from "./pages/Checkout";
+import Payment from "./pages/Payment";
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -34,6 +36,8 @@ function App() {
           <Route path="/api/users/activate" element={<ActivateAccount />} />
           <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/payment" element={<Payment />} />
           </Route>
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />
