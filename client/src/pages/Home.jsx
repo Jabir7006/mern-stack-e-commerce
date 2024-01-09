@@ -9,7 +9,6 @@ import OfferProduct from "../components/OfferProduct";
 import OnSaleProduct from "../components/OnSaleProduct";
 import Products from "../components/Products";
 import { categories } from "../data";
-import { addToCart } from "../redux/features/cartSlice";
 import {
   getProductFailure,
   getProductStart,
@@ -23,9 +22,8 @@ import { UserContext } from "../context/userContext";
 
 const Home = () => {
   const { products, loading } = useSelector((state) => state.product);
-  const { user } = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
-  const {handleAddToCart} = useContext(UserContext)
 
  
 

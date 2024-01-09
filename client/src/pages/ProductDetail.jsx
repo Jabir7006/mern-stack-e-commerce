@@ -5,11 +5,11 @@ import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import Loading from "../components/Loading";
-import ProductReview from "../components/productReview";
+import ProductReview from "../components/ProductReview";
 import { addToCart, decrementQuantity, incrementQuantity } from "../redux/features/cartSlice";
-import { handleGetSingleProduct } from "../services/productService";
-import { baseUrl } from "../services/userService";
 import { addToWhishList } from "../redux/features/wishlistSlice";
+import { handleGetSingleProduct } from "../services/productService";
+
 
 const ProductDetail = () => {
 
@@ -60,7 +60,7 @@ const ProductDetail = () => {
             <div className="sticky top-0 overflow-hidden z-10">
               <div className="relative mb-6 lg:mb-10 lg:h-2/4 ">
                 <img
-                  src={`${product.image?.startsWith("https") ?  product.image : baseUrl+"/"+ product.image}`}
+                  src={product.image}
                   alt="product image"  
                   className="object-cover w-full mx-auto lg:max-h-[700px] lg:object-contain"
                 />

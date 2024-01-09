@@ -3,12 +3,10 @@ import React, { useState } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import Rating from "react-rating";
 import { useSelector } from "react-redux";
+import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import { handleRatingProduct } from "../services/productService";
 import { baseUrl } from "../services/userService";
-import { MdDelete } from "react-icons/md";
-import { FaEdit } from "react-icons/fa";
-import { Link } from 'react-router-dom';
 
 
 
@@ -16,7 +14,6 @@ const ProductReview = ({ prodId, setProduct, reviews }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useSelector((state) => state.user);
 
   const handleRatingChange = (value) => {
@@ -127,7 +124,7 @@ const ProductReview = ({ prodId, setProduct, reviews }) => {
         </form>
         </>
         )
-        : <div className="mb-6"> <Link to="/login" className="text-blue-500 hover:underline">Login</Link> to write a review </div>
+        : ( <div className="mb-6"> <Link to="/login" className="text-blue-500 hover:underline">Login</Link> to write a review </div> )
       }
 
         {reviews?.map(

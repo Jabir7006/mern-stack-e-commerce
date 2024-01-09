@@ -17,7 +17,7 @@ app.listen(process.env.PORT || 5000, async () => {
   await connectDB();
 });
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "https://mern-ecommerce-app-6q33.onrender.com", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -28,9 +28,6 @@ app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
 app.use("/api/seed", seedRoute);
 app.use("/api/blogs", blogRoute);
-
-
-
 
 // Client error handling
 app.use((req, res, next) => {

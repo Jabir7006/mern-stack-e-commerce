@@ -1,15 +1,14 @@
 import axios from "axios";
 import { baseUrl } from "./userService";
-axios.defaults.withCredentials = true;
 
-export const handleGetProducts = async (
-  {search = "",
+export const handleGetProducts = async ({
+  search = "",
   category = "",
   brand = [],
   limit = 8,
   page = 1,
-  sort = ""}
-) => {
+  sort = "",
+}) => {
   const response = await axios.get(
     `${baseUrl}/api/products?search=${search}&category=${category}&brand=${brand}&limit=${limit}&page=${page}&sort=${sort}`
   );
@@ -29,7 +28,6 @@ export const handleRatingProduct = async (star, prodId, comment) => {
   });
   return response.data;
 };
-
 
 export const handleGetAllCategories = async () => {
   const response = await axios.get(`${baseUrl}/api/products/categories`);
