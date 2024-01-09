@@ -1,4 +1,5 @@
 import axios from "axios";
+axios.defaults.withCredentials = true;
 import { baseUrl } from "./userService";
 
 export const handleGetProducts = async ({
