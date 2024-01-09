@@ -1,6 +1,6 @@
 import axios from "axios";
-import { baseUrl } from "./userService";
 axios.defaults.withCredentials = true;
+import { baseUrl } from "./userService";
 
 export const handleGetProducts = async (
   {search = "",
