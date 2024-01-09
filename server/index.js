@@ -18,11 +18,11 @@ app.listen(process.env.PORT || 5000, async () => {
 });
 
 app.use(
-  cors({ origin: "https://mern-ecommerce-app-backend-jkkk.onrender.com", credentials: true })
+  cors({
+    origin: "https://mern-ecommerce-app-backend-jkkk.onrender.com",
+    credentials: true,
+  })
 );
-app.options("*", cors());
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
