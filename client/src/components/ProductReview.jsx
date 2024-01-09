@@ -14,7 +14,6 @@ const ProductReview = ({ prodId, setProduct, reviews }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useSelector((state) => state.user);
 
   const handleRatingChange = (value) => {
