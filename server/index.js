@@ -17,7 +17,7 @@ app.listen(process.env.PORT || 5000, async () => {
   await connectDB();
 });
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "https://mern-ecommerce-app-backend-jkkk.onrender.com", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
