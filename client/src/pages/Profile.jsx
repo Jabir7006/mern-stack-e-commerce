@@ -18,11 +18,9 @@ const Profile = () => {
           <div className="rounded  shadow p-6">
             <div className="flex justify-center mb-5 pt-4">
               <img
-               src={`${
-                user.image.startsWith("public/images/")
-                  ? baseUrl + "/" + user.image
-                  : user.image
-              }`}
+                src={`${
+                  user.image.startsWith("public/images/") ? baseUrl + "/" + user.image : user.image
+                }`}
                 alt="profile"
                 className="rounded-full w-32 h-32"
               />
@@ -69,7 +67,7 @@ const Profile = () => {
               />
             </div>
           </div>
-
+          
           <div
             className="absolute top-5 right-5 flex items-center gap-2 cursor-pointer text-white bg-[#20303D] p-2 rounded-md"
             onClick={() => setOpen(true)}

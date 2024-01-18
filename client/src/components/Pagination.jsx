@@ -7,11 +7,11 @@ const Paginate = ({ activePage, setActivePage, itemsCountPerPage, totalItemsCoun
     setActivePage(pageNumber);
   };
 
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 360);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 320);
+      setIsSmallScreen(window.innerWidth < 360);
     };
 
     window.addEventListener("resize", handleResize);
@@ -24,7 +24,7 @@ const Paginate = ({ activePage, setActivePage, itemsCountPerPage, totalItemsCoun
   return (
     <div className="flex justify-center lg:justify-end items-center pb-20 -mt-5">
       {isSmallScreen ? (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-8">
           <button
             onClick={() => handlePageChange(activePage - 1)}
             disabled={activePage === 1}

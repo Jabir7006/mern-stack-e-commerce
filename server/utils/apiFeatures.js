@@ -1,7 +1,8 @@
-class apiFeatures {
+class ApiFeatures {
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
+    this.originalQuery = { ...query.getQuery() }; // Store the original query
   }
 
   search() {
@@ -48,6 +49,7 @@ class apiFeatures {
       delete queryCopy.brand;
     }
 
+    
     let queryStr = JSON.stringify(queryCopy);
 
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
@@ -55,7 +57,6 @@ class apiFeatures {
     this.query = this.query.find(JSON.parse(queryStr));
     return this;
   }
-  
 
   sort() {
     if (this.queryString.sort) {
@@ -77,4 +78,4 @@ class apiFeatures {
   }
 }
 
-module.exports = apiFeatures;
+module.exports = ApiFeatures;

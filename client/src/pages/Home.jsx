@@ -3,6 +3,10 @@ import Marquee from "react-fast-marquee";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+import ProductModal from "../components/ProductModal";
+import { AnimatePresence } from "framer-motion";
+
 import Features from "../components/Features";
 import Hero from "../components/Hero";
 import OfferProduct from "../components/OfferProduct";
@@ -20,9 +24,11 @@ import { UserContext } from "../context/userContext";
 
 
 
+
+
 const Home = () => {
   const { products, loading } = useSelector((state) => state.product);
-
+const {showModal} = useContext(UserContext)
   const dispatch = useDispatch();
 
  
@@ -48,9 +54,13 @@ const Home = () => {
  
 
   return (
+  
   <main className="py-8 px-3 md:px-4 lg:px-8 overflow-x-hidden">
+    <AnimatePresence>
+        {showModal && <ProductModal />}
+        </AnimatePresence>
       {loading && <Loading />}
-      
+  
      
       <div>
         <Hero />
@@ -64,6 +74,9 @@ const Home = () => {
       <hr className="mb-12" />
 
       <div className="grid gap-2 min-[320px]:gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 lg:gap-6 items-center grid-cols-2 md:gap-x-5 justify-center">
+      {/* <AnimatePresence>
+    {showModal && <ProductModal />}
+    </AnimatePresence> */}
         {products.map((product) => (
           <Products
             key={product._id}
@@ -80,7 +93,7 @@ const Home = () => {
          
          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-[2px] sm:p-3">
          {categories.map((category) => (
-           <Link className="flex flex-col gap-2 items-center border border-transparent bg-white py-4 px-2 hover:shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]" key={category.id}>
+           <Link to={"/store"} className="flex flex-col gap-2 items-center border border-transparent bg-white py-4 px-2 hover:shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]" key={category.id}>
            <img src={category.img } className="w-24 h-24 object-contain" alt={category.name} />
            <p>{category.name}</p>
         </Link>

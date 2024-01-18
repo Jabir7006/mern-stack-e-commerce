@@ -131,9 +131,10 @@ function Checkout() {
                 <div className="flex flex-col space-y-4">
                   {cartItems.map((item) => (
                     <div className="flex space-x-4" key={item._id}>
-                    <div>
-                      <img src={item.image} alt="image" className="w-16 h-16 object-contain" />
+                    <div className='w-1/2 h-20'>
+                      <img src={item.image} alt="image" className="w-full h-full object-contain" />
                     </div>
+                     
                     <div>
                       <h2 className="text-md font-medium max-lines-1">{item.title}</h2>
                       <p className="text-sm">Lorem ipsum dolor sit amet, tet</p>

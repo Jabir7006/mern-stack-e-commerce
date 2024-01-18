@@ -50,7 +50,7 @@ const ProductReview = ({ prodId, setProduct, reviews }) => {
 
   return (
 
-    <section className="bg-gray-100 dark:bg-gray-900 py-8 lg:py-16 antialiased pt-24 mt-12 px-3 lg:px-8 relative">
+    <section className="bg-gray-100 py-8 lg:py-16 antialiased pt-24 mt-12 px-3 lg:px-8 relative">
     
     {loading && (
        <div id="loading-custom-icon" className="h-full w-full absolute top-0 left-0 flex justify-center items-center bg-black bg-opacity-50 z-[9999]">
@@ -62,12 +62,12 @@ const ProductReview = ({ prodId, setProduct, reviews }) => {
              </svg>
            </span>
          </div>
-         <span data-te-loading-text-ref className="text-white">Loading...</span>
+         <span data-te-loading-text-ref className="text-white ">Loading...</span>
        </div>
      </div>
     )}
 
-      <h2 className="text-2xl font-semibold mb-12 border-b-2 border-yellow-500 inline-block pb-1">
+      <h2 className="text-2xl font-semibold mb-12 border-b-2 border-yellow-500 inline-block pb-1 dark:text-[#1F2937]">
         Customer Reviews ({reviews?.length})
       </h2>
       <div className="max-w-full mx-auto ">
@@ -75,12 +75,12 @@ const ProductReview = ({ prodId, setProduct, reviews }) => {
         {user ? (
           <>
           <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-[#1F2937]">
             Write a Review
           </h2>
         </div>
         <form className="mb-6" onSubmit={handleSubmit}>
-          <label className="mb-4 flex items-center gap-5">
+          <label className="mb-4 flex items-center gap-5 dark:text-[#1F2937]">
             Rating:
             <Rating
               emptySymbol={
@@ -124,7 +124,7 @@ const ProductReview = ({ prodId, setProduct, reviews }) => {
         </form>
         </>
         )
-        : ( <div className="mb-6"> <Link to="/login" className="text-blue-500 hover:underline">Login</Link> to write a review </div> )
+        : ( <div className="mb-6"> <Link to="/login" className="text-blue-500 hover:underline dark:underline">Login</Link> <span className="dark:text-[#1F2937]">to write a review</span> </div> )
       }
 
         {reviews?.map(
@@ -139,7 +139,7 @@ const ProductReview = ({ prodId, setProduct, reviews }) => {
                   <div className="flex items-center">
                     <img
                       className="mr-2 w-6 h-6 rounded-full"
-                      src={`${baseUrl}/${review.postedBy?.image}`}
+                      src={review.postedBy?.image}
                       alt="user profile picture"
                     />
                     <p className="flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">

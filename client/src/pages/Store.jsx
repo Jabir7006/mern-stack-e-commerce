@@ -26,15 +26,15 @@ import {
 } from "../redux/features/productSlice";
 import { handleGetAllCategories, handleGetProducts } from "../services/productService";
 import { baseUrl } from "../services/userService";
+import { AnimatePresence } from "framer-motion";
 
 const sortOptions = [
   { name: "Most Popular", value: "popularity", current: true },
-  { name: "Best Rating", value: "-totalRatings" , current: false },
+  { name: "Best Rating", value: "-totalRatings", current: false },
   { name: "Newest", value: "createdAt", current: false },
   { name: "Price: Low to High", value: "price", current: false },
   { name: "Price: High to Low", value: "-price", current: false },
 ];
-
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -43,9 +43,9 @@ function classNames(...classes) {
 export default function Store() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const { loading, products, error } = useSelector((state) => state.product);
-  const { user } = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
 
   const [activePage, setActivePage] = useState(1);
   const [itemsCountPerPage, setItemsCountPerPage] = useState(12);
@@ -57,10 +57,11 @@ export default function Store() {
   const [selectedCat, setSelectedCat] = useState([]);
   const [brands, setBrands] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState([]);
+  const [selectedPriceRange, setSelectedPriceRange] = useState([0, Infinity]);
+
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState("");
-
 
   const { handleAddToCart, handleAddToWishlist, showModal, setShowModal, setModalProd } =
     useContext(UserContext);
@@ -83,6 +84,7 @@ export default function Store() {
       const response = await handleGetProducts({
         category: category ? category : selectedCat.join(","),
         brand: selectedBrand.join(","),
+        price: selectedPriceRange,
         limit: itemsCountPerPage,
         page: activePage,
         sort: sort,
@@ -96,8 +98,15 @@ export default function Store() {
 
   useEffect(() => {
     getAllProducts();
-    console.log(sort)
-  }, [activePage, itemsCountPerPage, category, selectedCat, selectedBrand, sort]);
+  }, [
+    activePage,
+    itemsCountPerPage,
+    category,
+    selectedCat,
+    selectedBrand,
+    selectedPriceRange,
+    sort,
+  ]);
 
   const handleFilterByCategory = (e) => {
     e.preventDefault();
@@ -140,19 +149,39 @@ export default function Store() {
   const handleSorting = (e) => {
     e.preventDefault();
     setSort(e.target.value);
-  }
+    sortOptions.forEach((option) => {
+      if (option.value === e.target.value) {
+        option.current = true;
+      } else {
+        option.current = false;
+      }
+    });
+  };
 
   const priceOptions = [
-    { min: "0", max: "25", label: "$0 - $25", checked: false },
-    { min: "25", max: "50", label: "$25 - $50", checked: false },
-    { min: "50", max: "75", label: "$50 - $75", checked: false },
-    { min: "75", max: "100", label: "$75 - $100", checked: false },
-    { min: "100", label: "$100+", checked: false },
+    { label: "All", name: "price", min: 0, max: Infinity },
+    { label: "$0 - $25", name: "price", min: 0, max: 25 },
+    { label: "$25 - $50", name: "price", min: 25, max: 50 },
+    { label: "$50 - $75", name: "price", min: 50, max: 75 },
+    { label: "$75 - $100", name: "price", min: 75, max: 100 },
+    { label: "$100+", name: "price", min: 100, max: Infinity },
   ];
 
+  const handleFilterByPrice = (e) => {
+    const selectedPriceLabel = e.target.value;
+    const selectedPrice = priceOptions.find((price) => price.label === selectedPriceLabel);
+
+    if (selectedPrice) {
+      setSelectedPriceRange([selectedPrice.min, selectedPrice.max]);
+    }
+  };
+
   return (
-    <div className="px-3 md:px-4 lg:px-8">
-      {showModal && <ProductModal />}
+    <div className="px-3 md:px-4 lg:px-8 overflow-x-hidden">
+        <AnimatePresence>
+        {showModal && <ProductModal />}
+        </AnimatePresence>
+     
 
       <h1 className="text-center max-[350px]:hidden text-[#2b2c2c] min-[350px]:block text-2xl md:text-3xl font-bold pt-8 md:-mb-4">
         Our Store
@@ -201,17 +230,17 @@ export default function Store() {
                   <form className="mt-4 border-t border-gray-200">
                     <h3 className="sr-only">Categories</h3>
                     <ul role="list" className="px-2 py-3 text-gray-900">
-                    <li className="px-2">
-                    <button
-                      value=""
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCategory("");
-                      }}
-                    >
-                      All
-                    </button>
-                  </li>
+                      <li className="px-2">
+                        <button
+                          value=""
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCategory("");
+                          }}
+                        >
+                          All
+                        </button>
+                      </li>
                       {categories.slice(0, 5)?.map((category) => (
                         <li key={category}>
                           <button
@@ -230,150 +259,223 @@ export default function Store() {
 
                     {/* //mobile category filter// */}
 
-                      <Disclosure
-                        as="div"
-                       
-                        className="border-t border-gray-200 px-4 py-6"
-                      >
-                        {({ open }) => (
-                          <>
-                            <h3 className="-mx-2 -my-3 flow-root">
-                              <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                                <span className="font-medium text-gray-900">Categories</span>
-                                <span className="ml-6 flex items-center">
-                                  {open ? (
-                                    <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                                  ) : (
-                                    <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                                  )}
-                                </span>
-                              </Disclosure.Button>
-                            </h3>
-                            <Disclosure.Panel className="pt-6">
-                              <div className="space-y-6">
+                    <Disclosure as="div" className="border-t border-gray-200 px-4 py-6">
+                      {({ open }) => (
+                        <>
+                          <h3 className="-mx-2 -my-3 flow-root">
+                            <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
+                              <span className="font-medium text-gray-900">Categories</span>
+                              <span className="ml-6 flex items-center">
+                                {open ? (
+                                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                ) : (
+                                  <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                )}
+                              </span>
+                            </Disclosure.Button>
+                          </h3>
+                          <Disclosure.Panel className="pt-6">
+                            <div className="space-y-6">
                               {categories.slice(0, loadMore).map((category, index) => (
-                                  <div key={index} className="flex items-center">
-                                    <input
-                                      id={category}
-                                      name={category}
-                                      value={category}
-                                      onChange={handleFilterByCategory}
-                                      type="checkbox"
-                                      checked={selectedCat.includes(category)}
-                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <label
-                                      htmlFor={category}
-                                      className="ml-3 min-w-0 flex-1 text-gray-500"
-                                    >
-                                      {category}
-                                    </label>
-                                  </div>
-                                ))}
-                                 <div className="flex justify-between items-center">
-                            {categories.length > loadMore && (
-                              <button
-                                type="button"
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                onClick={() => setLoadMore((prev) => prev + 5)}
-                              >
-                                Load More
-                              </button>
-                            )}
-                            {selectedCat.length > 0 && (
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedCat([]);
-                                }}
-                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                              >
-                                reset
-                              </button>
-                            )}
-                          </div>
+                                <div key={index} className="flex items-center">
+                                  <input
+                                    id={category}
+                                    name={category}
+                                    value={category}
+                                    onChange={handleFilterByCategory}
+                                    type="checkbox"
+                                    checked={selectedCat.includes(category)}
+                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                  />
+                                  <label
+                                    htmlFor={category}
+                                    className="ml-3 min-w-0 flex-1 text-gray-500"
+                                  >
+                                    {category}
+                                  </label>
+                                </div>
+                              ))}
+                              <div className="flex justify-between items-center">
+                                {categories.length > loadMore && (
+                                  <button
+                                    type="button"
+                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                    onClick={() => setLoadMore((prev) => prev + 5)}
+                                  >
+                                    Load More
+                                  </button>
+                                )}
+                                {selectedCat.length > 0 && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setSelectedCat([]);
+                                    }}
+                                    className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                                  >
+                                    reset
+                                  </button>
+                                )}
                               </div>
-                            </Disclosure.Panel>
-                          </>
-                        )}
-
-                        
-                      </Disclosure>
+                            </div>
+                          </Disclosure.Panel>
+                        </>
+                      )}
+                    </Disclosure>
 
                     {/* //mobile brand filter// */}
-                      
-                    <Disclosure
-                        as="div"
-                       
-                        className="border-t border-gray-200 px-4 py-6"
-                      >
-                        {({ open }) => (
-                          <>
-                            <h3 className="-mx-2 -my-3 flow-root">
-                              <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                                <span className="font-medium text-gray-900">Brands</span>
-                                <span className="ml-6 flex items-center">
-                                  {open ? (
-                                    <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                                  ) : (
-                                    <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                                  )}
-                                </span>
-                              </Disclosure.Button>
-                            </h3>
-                            <Disclosure.Panel className="pt-6">
-                              <div className="space-y-6">
+
+                    <Disclosure as="div" className="border-y border-gray-200 px-4 py-6">
+                      {({ open }) => (
+                        <>
+                          <h3 className="-mx-2 -my-3 flow-root">
+                            <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
+                              <span className="font-medium text-gray-900">Brands</span>
+                              <span className="ml-6 flex items-center">
+                                {open ? (
+                                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                ) : (
+                                  <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                )}
+                              </span>
+                            </Disclosure.Button>
+                          </h3>
+                          <Disclosure.Panel className="pt-6">
+                            <div className="space-y-6">
                               {brands.slice(0, loadMore).map((brand, index) => (
-                                  <div key={index} className="flex items-center">
-                                    <input
-                                      id={brand}
-                                      name={brand}
-                                      value={brand}
-                                      onChange={handleFilterByBrand}
-                                      type="checkbox"
-                                      checked={selectedBrand.includes(brand)}
-                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <label
-                                      htmlFor={brand}
-                                      className="ml-3 min-w-0 flex-1 text-gray-500"
-                                    >
-                                      {brand}
-                                    </label>
-                                  </div>
-                                ))}
-                                 <div className="flex justify-between items-center">
-                            {brands.length > loadMore && (
+                                <div key={index} className="flex items-center">
+                                  <input
+                                    id={brand}
+                                    name={brand}
+                                    value={brand}
+                                    onChange={handleFilterByBrand}
+                                    type="checkbox"
+                                    checked={selectedBrand.includes(brand)}
+                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                  />
+                                  <label
+                                    htmlFor={brand}
+                                    className="ml-3 min-w-0 flex-1 text-gray-500"
+                                  >
+                                    {brand}
+                                  </label>
+                                </div>
+                              ))}
+                              <div className="flex justify-between items-center">
+                                {brands.length > loadMore && (
+                                  <button
+                                    type="button"
+                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                    onClick={() => setLoadMore((prev) => prev + 5)}
+                                  >
+                                    Load More
+                                  </button>
+                                )}
+                                {selectedBrand.length > 0 && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setSelectedBrand([]);
+                                    }}
+                                    className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                                  >
+                                    reset
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </Disclosure.Panel>
+                        </>
+                      )}
+                    </Disclosure>
+
+                    {/* //mobile price filter// */}
+
+                    <Disclosure
+                      as="div"
+                      className="py-6 px-4"
+                      defaultOpen={true}
+                    >
+                      {({ open }) => (
+                        <>
+                          <h3 className="-my-3 flow-root">
+                            <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500 transition-all ">
+                              <span className="font-medium text-gray-900">Price</span>
+                              <span className="ml-6 flex items-center">
+                                {open ? (
+                                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
+                                ) : (
+                                  <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                                )}
+                              </span>
+                            </Disclosure.Button>
+                          </h3>
+                          <Disclosure.Panel className="pt-6">
+                            <div className="space-y-4 border-b pb-8">
+                              {priceOptions.map((price, index) => (
+                                <div key={index} className="flex items-center">
+                                  <input
+                                    id={price.label}
+                                    name={price.name}
+                                    value={price.label}
+                                    onChange={handleFilterByPrice}
+                                    checked={
+                                      selectedPriceRange[0] === 0 &&
+                                      selectedPriceRange[1] === "Infinity"
+                                        ? true
+                                        : selectedPriceRange[0] === price.min &&
+                                          selectedPriceRange[1] === price.max
+                                    }
+                                    type="radio"
+                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                  />
+
+                                  <label
+                                    htmlFor={price.label}
+                                    className="ml-3 text-sm text-gray-600 capitalize"
+                                  >
+                                    {price.label}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="flex gap-3 mt-6">
+                              <input
+                                type="number"
+                                name="min"
+                                id="min"
+                                value={minPrice}
+                                onChange={(e) => setMinPrice(e.target.value)}
+                                placeholder="min"
+                                className="border border-gray-400 rounded-md px-2 w-[30%] focus:outline-none"
+                              />
+                              <input
+                                type="number"
+                                name="max"
+                                id="max"
+                                value={maxPrice}
+                                onChange={(e) => setMaxPrice(e.target.value)}
+                                placeholder="max"
+                                className="border border-gray-400 rounded-md px-2 w-[30%] focus:outline-none"
+                              />
+
                               <button
-                                type="button"
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                onClick={() => setLoadMore((prev) => prev + 5)}
-                              >
-                                Load More
-                              </button>
-                            )}
-                            {selectedBrand.length > 0 && (
-                              <button
+                                className="px-4 py-2 bg-orange-500 text-white rounded-md"
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  setSelectedBrand([]);
+                                  setSelectedPriceRange([
+                                    minPrice ? minPrice : 0,
+                                    maxPrice ? maxPrice : "Infinity",
+                                  ]);
                                 }}
-                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
                               >
-                                reset
+                                Apply
                               </button>
-                            )}
-                          </div>
-                              </div>
-                            </Disclosure.Panel>
-                          </>
-                        )}
-
-                        
-                      </Disclosure>
-
-                {/* //mobile price filter// */}
-                
+                            </div>
+                          </Disclosure.Panel>
+                        </>
+                      )}
+                    </Disclosure>
                   </form>
                 </Dialog.Panel>
               </Transition.Child>
@@ -625,7 +727,7 @@ export default function Store() {
 
                 {/* //Price filter// */}
 
-                <Disclosure as="div" className="border-b border-gray-200 py-6">
+                <Disclosure as="div" className="border-b border-gray-200 py-6" defaultOpen={true}>
                   {({ open }) => (
                     <>
                       <h3 className="-my-3 flow-root">
@@ -641,19 +743,25 @@ export default function Store() {
                         </Disclosure.Button>
                       </h3>
                       <Disclosure.Panel className="pt-6">
-                        <div className="space-y-4">
+                        <div className="space-y-4 border-b pb-8">
                           {priceOptions.map((price, index) => (
                             <div key={index} className="flex items-center">
                               <input
                                 id={price.label}
-                                name={price.label}
-                                min={Number(price.min)}
-                                max={Number(price.max)}
-                                // onChange={handleFilterByPrice}
-                                type="checkbox"
-                                // checked={selectedBrand.includes(brand)}
+                                name={price.name}
+                                value={price.label}
+                                onChange={handleFilterByPrice}
+                                checked={
+                                  selectedPriceRange[0] === 0 &&
+                                  selectedPriceRange[1] === "Infinity"
+                                    ? true
+                                    : selectedPriceRange[0] === price.min &&
+                                      selectedPriceRange[1] === price.max
+                                }
+                                type="radio"
                                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                               />
+
                               <label
                                 htmlFor={price.label}
                                 className="ml-3 text-sm text-gray-600 capitalize"
@@ -662,28 +770,41 @@ export default function Store() {
                               </label>
                             </div>
                           ))}
-                          <div className="flex justify-between items-center">
-                            {brands?.length > loadMoreBrands ? (
-                              <button
-                                type="button"
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                onClick={() => setLoadMoreBrands((prev) => prev + 5)}
-                              >
-                                Load More
-                              </button>
-                            ) : null}
-                            {selectedBrand.length > 0 && (
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedBrand([]);
-                                }}
-                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                              >
-                                reset
-                              </button>
-                            )}
-                          </div>
+                        </div>
+                        <div className="flex gap-3 mt-6">
+                          <input
+                            type="number"
+                            name="min"
+                            id="min"
+                            value={minPrice}
+                            onChange={(e) => setMinPrice(e.target.value)}
+                            placeholder="min"
+                            className="border border-gray-400 rounded-md px-2 w-[30%] focus:outline-none"
+                            min={0}
+                          />
+                          <input
+                            type="number"
+                            name="max"
+                            id="max"
+                            value={maxPrice}
+                            onChange={(e) => setMaxPrice(e.target.value)}
+                            placeholder="max"
+                            className="border border-gray-400 rounded-md px-2 w-[30%] focus:outline-none"
+                            min={1}
+                          />
+
+                          <button
+                            className="px-4 py-2 bg-orange-500 text-white rounded-md"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedPriceRange([
+                                minPrice ? minPrice : 0,
+                                maxPrice ? maxPrice : "Infinity",
+                              ]);
+                            }}
+                          >
+                            Apply
+                          </button>
                         </div>
                       </Disclosure.Panel>
                     </>

@@ -12,12 +12,18 @@ const seedRoute = require("./routes/seedRoute");
 const blogRoute = require("./routes/blogRoute");
 require("dotenv").config();
 
-app.listen(process.env.PORT || 5000, async () => {
+app.listen(process.env.PORT || 5000, "0.0.0.0", async () => {
   console.log(`Server started on port http://localhost:${process.env.PORT}`);
   await connectDB();
 });
 
-app.use(cors({ origin: "https://mern-ecommerce-app-6q33.onrender.com", credentials: true }));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://192.168.1.103:5173",
+  "https://mern-ecommerce-app-6q33.onrender.com",
+];
+
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

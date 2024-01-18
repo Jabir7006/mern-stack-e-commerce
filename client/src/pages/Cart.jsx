@@ -62,11 +62,15 @@ const Cart = () => {
             <div className='rounded-lg md:w-2/3'>
               {cartItems.map((item) => (
                 <div key={item._id} className='mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start gap-5'>
-                  <img
-                    src={`${item.image?.startsWith('https') ? item.image : baseUrl + '/' + item.image}`}
-                    alt='product-image'
-                    className='w-56 h-56 mx-auto rounded-lg sm:h-32 sm:w-32'
-                  />
+                
+                  <div className="w-1/2 mx-auto overflow-hidden sm:w-24 sm:h-auto">
+  <img
+    className="object-cover w-full h-full"
+    src={item.image}
+    alt={item.title}
+  />
+</div>
+
                   <div className='sm:ml-4 sm:flex sm:w-full sm:justify-between'>
                     <div className='mt-5 sm:mt-0'>
                       <h2 className='text-lg font-bold text-gray-900 max-lines-2'>{item.title}</h2>

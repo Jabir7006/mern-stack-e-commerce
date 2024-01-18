@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
-import { IoMdHeartEmpty, IoIosCloseCircleOutline } from "react-icons/io";
+import { IoMdHeartEmpty } from "react-icons/io";
 import { IoGitCompareOutline } from "react-icons/io5";
 import { LuEye } from "react-icons/lu";
 import Rating from "react-rating";
@@ -9,20 +9,18 @@ import { baseUrl } from "../services/userService";
 
 import "swiper/css";
 import "swiper/css/pagination";
-import { useDispatch } from "react-redux";
-import { addToWhishList } from "../redux/features/wishlistSlice";
-import ProductModal from "./ProductModal";
+
 import { UserContext } from "../context/userContext";
+
 
 const Products = ({ product }) => {
 
   const {handleAddToCart, handleAddToWishlist, showModal, setShowModal, setModalProd} = useContext(UserContext)
-  const dispatch = useDispatch();
+
 
  
   return (
  
-showModal && <ProductModal />, 
     
     <div className="hover:border-2 hover:border-yellow-400 transition-all duration-200 p-1 min-[320px]:p-2 min-[420px]:p-3 w-full max-[320px]:h-[320px] max-h-[345px] md:max-w-[300px] text-center overflow-hidden group shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] hover:scale-[.99] min-[390px]:hover:scale-[.96] rounded relative">
       

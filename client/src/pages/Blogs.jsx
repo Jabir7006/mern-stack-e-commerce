@@ -12,7 +12,7 @@ import { BiLike, BiSolidLike } from "react-icons/bi";
 const Blogs = () => {
   const { blogs, loading, error } = useSelector((state) => state.blog);
   const { user } = useSelector((state) => state.user);
-  const [isLiked, setIsLiked] = useState();
+
 
 
   const dispatch = useDispatch();

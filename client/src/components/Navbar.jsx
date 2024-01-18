@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineClose, AiOutlineLogin } from "react-icons/ai";
 import { BsFillBagHeartFill, BsHeart } from "react-icons/bs";
@@ -30,7 +31,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        const response = await handleGetProducts({search : searchQuery});
+        const response = await handleGetProducts({ search: searchQuery });
         setSearchResults(response.payload.products);
         setError(null);
       } catch (error) {
@@ -65,21 +66,29 @@ const Navbar = () => {
       {/* fistNav  */}
       <div className="border-b border-gray-400 py-1 md:py-2 px-3 md:px-4 lg:px-8">
         <div className="flex justify-between items-center h-7 text-[.9rem]">
-          <p className="text-[.7rem] sm:text-[.85rem] md:text-[.92rem]">Free Shipping Over $100 & Free returns</p>
+          <p className="text-[.7rem] sm:text-[.85rem] md:text-[.92rem]">
+            Free Shipping Over $100 & Free returns
+          </p>
           <p className="text-[.7rem] sm:text-[.85rem] md:text-[.92rem]">Hotline : +123-456-789</p>
         </div>
       </div>
 
       {/* secondNav */}
       <div className="flex justify-between items-center gap-3 py-3 px-3 md:px-4 lg:px-8">
-        <Link to="/" className=" font-semibold text-[1.1rem] sm:text-[1.2rem] lg:text-2xl flex items-center gap-2">
-          <BsFillBagHeartFill className="text-yellow-400 mb-1"/>
+        <Link
+          to="/"
+          className=" font-semibold text-[1.1rem] sm:text-[1.2rem] lg:text-2xl flex items-center gap-2"
+        >
+          <BsFillBagHeartFill className="text-yellow-400 mb-1" />
           <h6>KizMart</h6>
         </Link>
 
         {/* search bar */}
 
-        <div className="hidden input-group md:flex w-full md:w-96 xl:w-[35rem] relative" ref={searchContainerRef}>
+        <div
+          className="hidden input-group md:flex w-full md:w-96 xl:w-[35rem] relative"
+          ref={searchContainerRef}
+        >
           <input
             type="search"
             className="form-control relative flex-auto min-w-0 block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -112,21 +121,27 @@ const Navbar = () => {
             </svg>
           </button>
           {searchQuery && searchQuery.length > 0 && (
-            <div
-              className="absolute top-[36px] right-0 p-2 w-full bg-white z-[999] shadow-xl max-h-[400px] overflow-auto border-t"
-            >
-              {searchResults.length > 0 && !error && (
+            <div className="absolute top-[36px] right-0 p-2 w-full bg-white z-[999] shadow-xl max-h-[400px] overflow-auto border-t">
+              {searchResults.length > 0 &&
+                !error &&
                 searchResults.map((product) => (
-                  <Link to={`/product/${product._id}`} key={product._id} className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600">
+                  <Link
+                    to={`/product/${product._id}`}
+                    key={product._id}
+                    className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600"
+                  >
                     <img
-                      src={`${product.image.startsWith("public/images/") ? baseUrl+"/"+ product.image : product.image}`}
+                      src={`${
+                        product.image.startsWith("public/images/")
+                          ? baseUrl + "/" + product.image
+                          : product.image
+                      }`}
                       className="max-w-12 h-12"
                       alt="product image"
                     />
                     <p>{product.title}</p>
                   </Link>
-                ))
-              )}
+                ))}
               {error && (
                 <div className="flex text-black p-3">
                   <p>{error}</p>
@@ -152,20 +167,17 @@ const Navbar = () => {
 
           <div className="hidden sm:flex items-center gap-2 ">
             <div className="relative">
-            <BsHeart className="text-[1.1rem] lg:text-[25px]" />
-            {whishListItems && whishListItems.length > 0 && (
-              <span className="absolute top-0 end-0 inline-flex items-center w-3.5 h-3.5 rounded-full border-2 border-white text-xs font-medium transform -translate-y-1/2 translate-x-1/2 bg-yellow-500 text-white dark:border-slate-900">
-              <span className="sr-only">Badge value</span>
-            </span>
-            )}
+              <BsHeart className="text-[1.1rem] lg:text-[25px]" />
+              {whishListItems && whishListItems.length > 0 && (
+                <span className="absolute top-0 end-0 inline-flex items-center w-3.5 h-3.5 rounded-full border-2 border-white text-xs font-medium transform -translate-y-1/2 translate-x-1/2 bg-yellow-500 text-white dark:border-slate-900">
+                  <span className="sr-only">Badge value</span>
+                </span>
+              )}
             </div>
-           
+
             <Link to="/wishlist" className="text-[.91rem] lg:text-[1rem]">
               Wishlist
-              
             </Link>
-           
-
           </div>
 
           <Link to="/cart" className="flex items-center gap-1">
@@ -180,45 +192,72 @@ const Navbar = () => {
 
           {/* mobile menu */}
           <LuMenu size={22} className="lg:hidden cursor-pointer" onClick={() => setOpen(!open)} />
-          {open && (
-            <div
-              className={`${
-                open ? "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 lg:hidden" : ""
-              }`}
-            >
-              <div className="flex flex-col justify-center items-center lg:hidden gap-6 z-10 fixed top-0 right-0 bg-[#20303D] w-[60%] p-4 h-full">
-              <NavLink to="/" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
-          <IoHomeOutline />
-           <p>Home</p>
-          </NavLink>
-          <NavLink to="/store" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
-          <IoStorefrontOutline />
-           <p>Store</p>
-          </NavLink>
-          <NavLink to="/blogs" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
-          <TbBrandBlogger />
-           <p>Blogs</p>
-          </NavLink>
-          <NavLink to="/contact" className="flex items-center gap-1 hover:text-yellow-500 duration-300" onClick={() => setOpen(false)}>
-            <MdOutlineContactSupport />
-            <p>Contact</p>
-          </NavLink>
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                className={`${
+                  open
+                    ? "fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 lg:hidden"
+                    : ""
+                }`}
+              >
+                <motion.div
+                  className="flex flex-col justify-center items-center lg:hidden gap-6 z-10 fixed top-0 right-0 bg-[#20303D] w-[60%] p-4 h-full"
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <NavLink
+                    to="/"
+                    className="flex items-center gap-1 hover:text-yellow-500 duration-300"
+                    onClick={() => setOpen(false)}
+                  >
+                    <IoHomeOutline />
+                    <p>Home</p>
+                  </NavLink>
+                  <NavLink
+                    to="/store"
+                    className="flex items-center gap-1 hover:text-yellow-500 duration-300"
+                    onClick={() => setOpen(false)}
+                  >
+                    <IoStorefrontOutline />
+                    <p>Store</p>
+                  </NavLink>
+                  <NavLink
+                    to="/blogs"
+                    className="flex items-center gap-1 hover:text-yellow-500 duration-300"
+                    onClick={() => setOpen(false)}
+                  >
+                    <TbBrandBlogger />
+                    <p>Blogs</p>
+                  </NavLink>
+                  <NavLink
+                    to="/contact"
+                    className="flex items-center gap-1 hover:text-yellow-500 duration-300"
+                    onClick={() => setOpen(false)}
+                  >
+                    <MdOutlineContactSupport />
+                    <p>Contact</p>
+                  </NavLink>
 
-                <NavLink to="/wishlist" className="flex md:hidden items-center gap-1 hover:text-yellow-500 duration-300">
-            <BsHeart className="text-[1.1rem] lg:text-[25px]" />
-            <p className="text-[.91rem] lg:text-[1rem]">
-              Wishlist
-            </p>
-          </NavLink>
-              </div>
-              <AiOutlineClose
-                size={22}
-                onClick={() => setOpen(false)}
-                className="lg:hidden cursor-pointer fixed top-5 right-5 z-50 text-white"
-              />
-            </div>
-          )}
-        </div>                                                                          
+                  <NavLink
+                    to="/wishlist"
+                    className="flex md:hidden items-center gap-1 hover:text-yellow-500 duration-300"
+                  >
+                    <BsHeart className="text-[1.1rem] lg:text-[25px]" />
+                    <p className="text-[.91rem] lg:text-[1rem]">Wishlist</p>
+                  </NavLink>
+                  <AiOutlineClose
+                    size={22}
+                    onClick={() => setOpen(false)}
+                    className="lg:hidden cursor-pointer fixed top-5 right-5 z-50 text-white"
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* thirdNav */}
@@ -226,18 +265,27 @@ const Navbar = () => {
       <div className="lg:bg-[#20303D] px-3 md:px-4 lg:px-8">
         <div className="hidden lg:flex gap-6 py-3 z-10">
           <NavLink to="/" className="flex items-center gap-1 hover:text-yellow-500 duration-300">
-          <IoHomeOutline />
-           <p>Home</p>
+            <IoHomeOutline />
+            <p>Home</p>
           </NavLink>
-          <NavLink to="/store" className="flex items-center gap-1 hover:text-yellow-500 duration-300">
-          <IoStorefrontOutline />
-           <p>Store</p>
+          <NavLink
+            to="/store"
+            className="flex items-center gap-1 hover:text-yellow-500 duration-300"
+          >
+            <IoStorefrontOutline />
+            <p>Store</p>
           </NavLink>
-          <NavLink to="/blogs" className="flex items-center gap-1 hover:text-yellow-500 duration-300">
-          <TbBrandBlogger />
-           <p>Blogs</p>
+          <NavLink
+            to="/blogs"
+            className="flex items-center gap-1 hover:text-yellow-500 duration-300"
+          >
+            <TbBrandBlogger />
+            <p>Blogs</p>
           </NavLink>
-          <NavLink to="/contact" className="flex items-center gap-1 hover:text-yellow-500 duration-300">
+          <NavLink
+            to="/contact"
+            className="flex items-center gap-1 hover:text-yellow-500 duration-300"
+          >
             <MdOutlineContactSupport />
             <p>Contact</p>
           </NavLink>
@@ -251,7 +299,7 @@ const Navbar = () => {
               placeholder="Search"
               aria-label="Search"
               value={searchQuery}
-            onChange={handleSearch}
+              onChange={handleSearch}
               aria-describedby="button-addon2"
             />
             <button
@@ -277,35 +325,40 @@ const Navbar = () => {
               </svg>
             </button>
             {searchQuery && searchQuery.length > 0 && (
-            <div
-              className="absolute top-[37px] right-0 p-2 w-full bg-white z-[999] shadow-xl max-h-[320px] overflow-auto rounded-b-md"
-              onClick={() => setSearchQuery("")}
-            >
-              {searchResults.length > 0 && !error && (
-                searchResults.map((product) => (
-                  <Link to={`/product/${product._id}`} key={product._id} className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600">
-                    <img
-                      src={`${product.image.startsWith("public/images/") ? baseUrl+"/"+ product.image : product.image}`}
-                      className="w-12 h-12"
-                      alt="product image"
-                    />
-                    <p>{product.title}</p>
-                  </Link>
-                ))
-              )}
-              {error && (
-                <div className="flex text-black p-3">
-                  <p>{error}</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          
+              <div
+                className="absolute top-[37px] right-0 p-2 w-full bg-white z-[999] shadow-xl max-h-[320px] overflow-auto rounded-b-md"
+                onClick={() => setSearchQuery("")}
+              >
+                {searchResults.length > 0 &&
+                  !error &&
+                  searchResults.map((product) => (
+                    <Link
+                      to={`/product/${product._id}`}
+                      key={product._id}
+                      className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600"
+                    >
+                      <img
+                        src={`${
+                          product.image.startsWith("public/images/")
+                            ? baseUrl + "/" + product.image
+                            : product.image
+                        }`}
+                        className="w-12 h-12"
+                        alt="product image"
+                      />
+                      <p>{product.title}</p>
+                    </Link>
+                  ))}
+                {error && (
+                  <div className="flex text-black p-3">
+                    <p>{error}</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
-      
     </header>
   );
 };

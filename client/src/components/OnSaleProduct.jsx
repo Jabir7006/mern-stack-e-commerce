@@ -73,13 +73,13 @@ const OnSaleProduct = ({ products }) => {
         modules={[Grid, Navigation]}
       >
         {products.map((product) => (
-           <SwiperSlide key={product._id} className='border-2 border-[#EBEBEB] hover:border-yellow-400 transition-all duration-200 p-3 flex'>
+           <SwiperSlide key={product._id} className='border-2 border-[#EBEBEB] hover:border-yellow-400 transition-all duration-200 p-3 flex items-center gap-3'>
              <Link to={`/product/${product._id}`}>
-             <img src={`${product.image.startsWith("public/images/") ? baseUrl+"/"+ product.image : product.image}`} className='w-60 h-36 object-contain' alt="" />
+             <img src={product.image} className='max-w-[100px] h-[130px] object-fill' alt="" />
              </Link>
 
               <div>
-                <Link to={`/product/${product._id}`} className="text-base text-blue-600 hover:underline">{product.title}</Link>
+                <Link to={`/product/${product._id}`} className="text-base text-blue-600 hover:underline max-lines-3">{product.title}</Link>
                 <p className='text-yellow-500 my-1'>
                 <Rating
             initialRating={product.totalRatings}

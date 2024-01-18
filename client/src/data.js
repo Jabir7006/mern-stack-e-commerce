@@ -1,3 +1,29 @@
+"smartphone"
+
+"cordless phone"
+
+"accessories"
+
+"women's clothing"
+
+"powerbank"
+
+"camera"
+
+"console"
+
+"watch"
+
+"jewelry"
+
+"electronics"
+
+"men's clothing"
+
+"headphone"
+
+"backpack"
+
 export const categories = [
     {
       id : 1,
@@ -71,19 +97,4 @@ export const categories = [
       name : 'Tablets',
       value : 'smartphone'
     },
-  ]
-
-  export const brand = [
-    {
-      id : 1,
-      name : 'Apple'
-    },
-    {
-      id : 2,
-      name : 'Samsung'
-    },
-    {
-      id : 3,
-      name : 'OnePlus'
-    }
   ]
