@@ -1,32 +1,26 @@
-import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
-import {
-  ChevronDownIcon,
-  FunnelIcon,
-  MinusIcon,
-  PlusIcon,
-  Squares2X2Icon,
-} from "@heroicons/react/20/solid";
+import { Dialog, Menu, Transition } from "@headlessui/react";
+import { ChevronDownIcon, FunnelIcon, Squares2X2Icon } from "@heroicons/react/20/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import React, { Fragment, useContext, useEffect, useState, lazy, Suspense } from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { IoGitCompareOutline } from "react-icons/io5";
 import { LuEye } from "react-icons/lu";
 import Rating from "react-rating";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import Filter from "../components/Filter";
 import Loading from "../components/Loading";
 import Paginate from "../components/Pagination";
-import ProductModal from "../components/ProductModal";
 import { UserContext } from "../context/userContext";
 import {
   getProductFailure,
   getProductStart,
   getProductSuccess,
 } from "../redux/features/productSlice";
-import { handleGetAllCategories, handleGetProducts } from "../services/productService";
-import { baseUrl } from "../services/userService";
-import { AnimatePresence } from "framer-motion";
+import { handleGetProducts } from "../services/productService";
+const ProductModal = lazy(() => import("../components/ProductModal"));
 
 const sortOptions = [
   { name: "Most Popular", value: "popularity", current: true },
@@ -46,37 +40,21 @@ export default function Store() {
 
   const dispatch = useDispatch();
 
-
   const [activePage, setActivePage] = useState(1);
   const [itemsCountPerPage, setItemsCountPerPage] = useState(12);
   const [totalItemsCount, setTotalItemsCount] = useState(0);
-  const [loadMore, setLoadMore] = useState(6);
-  const [loadMoreBrands, setLoadMoreBrands] = useState(6);
+
   const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState([]);
+
   const [selectedCat, setSelectedCat] = useState([]);
-  const [brands, setBrands] = useState([]);
+
   const [selectedBrand, setSelectedBrand] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([0, Infinity]);
 
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState("");
 
   const { handleAddToCart, handleAddToWishlist, showModal, setShowModal, setModalProd } =
     useContext(UserContext);
-  useEffect(() => {
-    const getAllCategories = async () => {
-      try {
-        const response = await handleGetAllCategories();
-        setCategories(response.payload.categories);
-        setBrands(response.payload.brands);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getAllCategories();
-  }, [products]);
 
   const getAllProducts = async () => {
     try {
@@ -108,44 +86,6 @@ export default function Store() {
     sort,
   ]);
 
-  const handleFilterByCategory = (e) => {
-    e.preventDefault();
-    const selectedCategory = e.target.value;
-
-    // Check if the category is already selected
-    const categoryIndex = selectedCat.indexOf(selectedCategory);
-
-    if (categoryIndex === -1) {
-      // If not selected, add it to the array
-      setSelectedCat((prevCategories) => [...prevCategories, selectedCategory]);
-    } else {
-      // If already selected, remove it from the array
-      setSelectedCat((prevCategories) => [
-        ...prevCategories.slice(0, categoryIndex),
-        ...prevCategories.slice(categoryIndex + 1),
-      ]);
-    }
-  };
-
-  const handleFilterByBrand = (e) => {
-    e.preventDefault();
-    const selectedBrands = e.target.value;
-
-    // Check if the category is already selected
-    const brandIndex = selectedBrand.indexOf(selectedBrands);
-
-    if (brandIndex === -1) {
-      // If not selected, add it to the array
-      setSelectedBrand((prevBrand) => [...prevBrand, selectedBrands]);
-    } else {
-      // If already selected, remove it from the array
-      setSelectedBrand((prevBrand) => [
-        ...prevBrand.slice(0, brandIndex),
-        ...prevBrand.slice(brandIndex + 1),
-      ]);
-    }
-  };
-
   const handleSorting = (e) => {
     e.preventDefault();
     setSort(e.target.value);
@@ -158,30 +98,15 @@ export default function Store() {
     });
   };
 
-  const priceOptions = [
-    { label: "All", name: "price", min: 0, max: Infinity },
-    { label: "$0 - $25", name: "price", min: 0, max: 25 },
-    { label: "$25 - $50", name: "price", min: 25, max: 50 },
-    { label: "$50 - $75", name: "price", min: 50, max: 75 },
-    { label: "$75 - $100", name: "price", min: 75, max: 100 },
-    { label: "$100+", name: "price", min: 100, max: Infinity },
-  ];
-
-  const handleFilterByPrice = (e) => {
-    const selectedPriceLabel = e.target.value;
-    const selectedPrice = priceOptions.find((price) => price.label === selectedPriceLabel);
-
-    if (selectedPrice) {
-      setSelectedPriceRange([selectedPrice.min, selectedPrice.max]);
-    }
-  };
-
   return (
     <div className="px-3 md:px-4 lg:px-8 overflow-x-hidden">
-        <AnimatePresence>
-        {showModal && <ProductModal />}
-        </AnimatePresence>
-     
+      <AnimatePresence>
+        <Suspense
+          fallback={<div className="text-center animate-pulse font-medium">Loading...</div>}
+        >
+          {showModal && <ProductModal />}
+        </Suspense>
+      </AnimatePresence>
 
       <h1 className="text-center max-[350px]:hidden text-[#2b2c2c] min-[350px]:block text-2xl md:text-3xl font-bold pt-8 md:-mb-4">
         Our Store
@@ -228,254 +153,7 @@ export default function Store() {
 
                   {/* Filters */}
                   <form className="mt-4 border-t border-gray-200">
-                    <h3 className="sr-only">Categories</h3>
-                    <ul role="list" className="px-2 py-3 text-gray-900">
-                      <li className="px-2">
-                        <button
-                          value=""
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setCategory("");
-                          }}
-                        >
-                          All
-                        </button>
-                      </li>
-                      {categories.slice(0, 5)?.map((category) => (
-                        <li key={category}>
-                          <button
-                            value={category}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCategory(e.target.value);
-                            }}
-                            className="block px-2 py-3"
-                          >
-                            {category}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* //mobile category filter// */}
-
-                    <Disclosure as="div" className="border-t border-gray-200 px-4 py-6">
-                      {({ open }) => (
-                        <>
-                          <h3 className="-mx-2 -my-3 flow-root">
-                            <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                              <span className="font-medium text-gray-900">Categories</span>
-                              <span className="ml-6 flex items-center">
-                                {open ? (
-                                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                                ) : (
-                                  <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                                )}
-                              </span>
-                            </Disclosure.Button>
-                          </h3>
-                          <Disclosure.Panel className="pt-6">
-                            <div className="space-y-6">
-                              {categories.slice(0, loadMore).map((category, index) => (
-                                <div key={index} className="flex items-center">
-                                  <input
-                                    id={category}
-                                    name={category}
-                                    value={category}
-                                    onChange={handleFilterByCategory}
-                                    type="checkbox"
-                                    checked={selectedCat.includes(category)}
-                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                  />
-                                  <label
-                                    htmlFor={category}
-                                    className="ml-3 min-w-0 flex-1 text-gray-500"
-                                  >
-                                    {category}
-                                  </label>
-                                </div>
-                              ))}
-                              <div className="flex justify-between items-center">
-                                {categories.length > loadMore && (
-                                  <button
-                                    type="button"
-                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                    onClick={() => setLoadMore((prev) => prev + 5)}
-                                  >
-                                    Load More
-                                  </button>
-                                )}
-                                {selectedCat.length > 0 && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setSelectedCat([]);
-                                    }}
-                                    className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                                  >
-                                    reset
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </Disclosure.Panel>
-                        </>
-                      )}
-                    </Disclosure>
-
-                    {/* //mobile brand filter// */}
-
-                    <Disclosure as="div" className="border-y border-gray-200 px-4 py-6">
-                      {({ open }) => (
-                        <>
-                          <h3 className="-mx-2 -my-3 flow-root">
-                            <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                              <span className="font-medium text-gray-900">Brands</span>
-                              <span className="ml-6 flex items-center">
-                                {open ? (
-                                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                                ) : (
-                                  <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                                )}
-                              </span>
-                            </Disclosure.Button>
-                          </h3>
-                          <Disclosure.Panel className="pt-6">
-                            <div className="space-y-6">
-                              {brands.slice(0, loadMore).map((brand, index) => (
-                                <div key={index} className="flex items-center">
-                                  <input
-                                    id={brand}
-                                    name={brand}
-                                    value={brand}
-                                    onChange={handleFilterByBrand}
-                                    type="checkbox"
-                                    checked={selectedBrand.includes(brand)}
-                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                  />
-                                  <label
-                                    htmlFor={brand}
-                                    className="ml-3 min-w-0 flex-1 text-gray-500"
-                                  >
-                                    {brand}
-                                  </label>
-                                </div>
-                              ))}
-                              <div className="flex justify-between items-center">
-                                {brands.length > loadMore && (
-                                  <button
-                                    type="button"
-                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                    onClick={() => setLoadMore((prev) => prev + 5)}
-                                  >
-                                    Load More
-                                  </button>
-                                )}
-                                {selectedBrand.length > 0 && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setSelectedBrand([]);
-                                    }}
-                                    className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                                  >
-                                    reset
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </Disclosure.Panel>
-                        </>
-                      )}
-                    </Disclosure>
-
-                    {/* //mobile price filter// */}
-
-                    <Disclosure
-                      as="div"
-                      className="py-6 px-4"
-                      defaultOpen={true}
-                    >
-                      {({ open }) => (
-                        <>
-                          <h3 className="-my-3 flow-root">
-                            <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500 transition-all ">
-                              <span className="font-medium text-gray-900">Price</span>
-                              <span className="ml-6 flex items-center">
-                                {open ? (
-                                  <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                                ) : (
-                                  <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                                )}
-                              </span>
-                            </Disclosure.Button>
-                          </h3>
-                          <Disclosure.Panel className="pt-6">
-                            <div className="space-y-4 border-b pb-8">
-                              {priceOptions.map((price, index) => (
-                                <div key={index} className="flex items-center">
-                                  <input
-                                    id={price.label}
-                                    name={price.name}
-                                    value={price.label}
-                                    onChange={handleFilterByPrice}
-                                    checked={
-                                      selectedPriceRange[0] === 0 &&
-                                      selectedPriceRange[1] === "Infinity"
-                                        ? true
-                                        : selectedPriceRange[0] === price.min &&
-                                          selectedPriceRange[1] === price.max
-                                    }
-                                    type="radio"
-                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                  />
-
-                                  <label
-                                    htmlFor={price.label}
-                                    className="ml-3 text-sm text-gray-600 capitalize"
-                                  >
-                                    {price.label}
-                                  </label>
-                                </div>
-                              ))}
-                            </div>
-                            <div className="flex gap-3 mt-6">
-                              <input
-                                type="number"
-                                name="min"
-                                id="min"
-                                value={minPrice}
-                                onChange={(e) => setMinPrice(e.target.value)}
-                                placeholder="min"
-                                className="border border-gray-400 rounded-md px-2 w-[30%] focus:outline-none"
-                              />
-                              <input
-                                type="number"
-                                name="max"
-                                id="max"
-                                value={maxPrice}
-                                onChange={(e) => setMaxPrice(e.target.value)}
-                                placeholder="max"
-                                className="border border-gray-400 rounded-md px-2 w-[30%] focus:outline-none"
-                              />
-
-                              <button
-                                className="px-4 py-2 bg-orange-500 text-white rounded-md"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedPriceRange([
-                                    minPrice ? minPrice : 0,
-                                    maxPrice ? maxPrice : "Infinity",
-                                  ]);
-                                }}
-                              >
-                                Apply
-                              </button>
-                            </div>
-                          </Disclosure.Panel>
-                        </>
-                      )}
-                    </Disclosure>
+                    <Filter />
                   </form>
                 </Dialog.Panel>
               </Transition.Child>
@@ -559,257 +237,18 @@ export default function Store() {
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
               {/* Filters */}
+
               <form className="hidden lg:block">
-                <h3 className="sr-only">Categories</h3>
-                <ul
-                  role="list"
-                  className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
-                >
-                  <li>
-                    <button
-                      value=""
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setCategory("");
-                      }}
-                    >
-                      All
-                    </button>
-                  </li>
-                  {categories.slice(0, 5)?.map((category) => (
-                    <li key={category}>
-                      <button
-                        className="hover:border-b duration-300 border-yellow-500 capitalize"
-                        value={category}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setCategory(e.target.value);
-                        }}
-                      >
-                        {category}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* //category Filter// */}
-
-                <Disclosure as="div" className="border-b border-gray-200 py-6">
-                  {({ open }) => (
-                    <>
-                      <h3 className="-my-3 flow-root">
-                        <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                          <span className="font-medium text-gray-900">Category</span>
-                          <span className="ml-6 flex items-center">
-                            {open ? (
-                              <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                            ) : (
-                              <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                            )}
-                          </span>
-                        </Disclosure.Button>
-                      </h3>
-                      <Disclosure.Panel className="pt-6">
-                        <div className="space-y-4">
-                          {categories.slice(0, loadMore).map((category, index) => (
-                            <div key={index} className="flex items-center">
-                              <input
-                                id={category}
-                                name={category}
-                                value={category}
-                                onChange={handleFilterByCategory}
-                                type="checkbox"
-                                checked={selectedCat.includes(category)}
-                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                              />
-                              <label
-                                htmlFor={category}
-                                className="ml-3 text-sm text-gray-600 capitalize"
-                              >
-                                {category}
-                              </label>
-                            </div>
-                          ))}
-
-                          <div className="flex justify-between items-center">
-                            {categories.length > loadMore && (
-                              <button
-                                type="button"
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                onClick={() => setLoadMore((prev) => prev + 5)}
-                              >
-                                Load More
-                              </button>
-                            )}
-                            {selectedCat.length > 0 && (
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedCat([]);
-                                }}
-                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                              >
-                                reset
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </Disclosure.Panel>
-                    </>
-                  )}
-                </Disclosure>
-
-                {/* //brands filter// */}
-
-                <Disclosure as="div" className="border-b border-gray-200 py-6">
-                  {({ open }) => (
-                    <>
-                      <h3 className="-my-3 flow-root">
-                        <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500 transition-all ">
-                          <span className="font-medium text-gray-900">Brands</span>
-                          <span className="ml-6 flex items-center">
-                            {open ? (
-                              <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                            ) : (
-                              <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                            )}
-                          </span>
-                        </Disclosure.Button>
-                      </h3>
-                      <Disclosure.Panel className="pt-6">
-                        <div className="space-y-4">
-                          {brands.slice(0, loadMoreBrands).map((brand, index) => (
-                            <div key={index} className="flex items-center">
-                              <input
-                                id={brand}
-                                name={brand}
-                                value={brand}
-                                onChange={handleFilterByBrand}
-                                type="checkbox"
-                                checked={selectedBrand.includes(brand)}
-                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                              />
-                              <label
-                                htmlFor={brand}
-                                className="ml-3 text-sm text-gray-600 capitalize"
-                              >
-                                {brand}
-                              </label>
-                            </div>
-                          ))}
-                          <div className="flex justify-between items-center">
-                            {brands?.length > loadMoreBrands ? (
-                              <button
-                                type="button"
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                onClick={() => setLoadMoreBrands((prev) => prev + 5)}
-                              >
-                                Load More
-                              </button>
-                            ) : null}
-                            {selectedBrand.length > 0 && (
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  setSelectedBrand([]);
-                                }}
-                                className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                              >
-                                reset
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </Disclosure.Panel>
-                    </>
-                  )}
-                </Disclosure>
-
-                {/* //Price filter// */}
-
-                <Disclosure as="div" className="border-b border-gray-200 py-6" defaultOpen={true}>
-                  {({ open }) => (
-                    <>
-                      <h3 className="-my-3 flow-root">
-                        <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500 transition-all ">
-                          <span className="font-medium text-gray-900">Price</span>
-                          <span className="ml-6 flex items-center">
-                            {open ? (
-                              <MinusIcon className="h-5 w-5" aria-hidden="true" />
-                            ) : (
-                              <PlusIcon className="h-5 w-5" aria-hidden="true" />
-                            )}
-                          </span>
-                        </Disclosure.Button>
-                      </h3>
-                      <Disclosure.Panel className="pt-6">
-                        <div className="space-y-4 border-b pb-8">
-                          {priceOptions.map((price, index) => (
-                            <div key={index} className="flex items-center">
-                              <input
-                                id={price.label}
-                                name={price.name}
-                                value={price.label}
-                                onChange={handleFilterByPrice}
-                                checked={
-                                  selectedPriceRange[0] === 0 &&
-                                  selectedPriceRange[1] === "Infinity"
-                                    ? true
-                                    : selectedPriceRange[0] === price.min &&
-                                      selectedPriceRange[1] === price.max
-                                }
-                                type="radio"
-                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                              />
-
-                              <label
-                                htmlFor={price.label}
-                                className="ml-3 text-sm text-gray-600 capitalize"
-                              >
-                                {price.label}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="flex gap-3 mt-6">
-                          <input
-                            type="number"
-                            name="min"
-                            id="min"
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(e.target.value)}
-                            placeholder="min"
-                            className="border border-gray-400 rounded-md px-2 w-[30%] focus:outline-none"
-                            min={0}
-                          />
-                          <input
-                            type="number"
-                            name="max"
-                            id="max"
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(e.target.value)}
-                            placeholder="max"
-                            className="border border-gray-400 rounded-md px-2 w-[30%] focus:outline-none"
-                            min={1}
-                          />
-
-                          <button
-                            className="px-4 py-2 bg-orange-500 text-white rounded-md"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setSelectedPriceRange([
-                                minPrice ? minPrice : 0,
-                                maxPrice ? maxPrice : "Infinity",
-                              ]);
-                            }}
-                          >
-                            Apply
-                          </button>
-                        </div>
-                      </Disclosure.Panel>
-                    </>
-                  )}
-                </Disclosure>
+                <Filter
+                  setCategory={setCategory}
+                  selectedCat={selectedCat}
+                  setSelectedCat={setSelectedCat}
+                  selectedBrand={selectedBrand}
+                  setSelectedBrand={setSelectedBrand}
+                  selectedPriceRange={selectedPriceRange}
+                  setSelectedPriceRange={setSelectedPriceRange}
+                  products={products}
+                />
               </form>
 
               {/* Product grid */}
@@ -825,13 +264,10 @@ export default function Store() {
                           <div className="relative overflow-hidden group">
                             <Link to={`/product/${product._id}`}>
                               <img
-                                src={`${
-                                  product.image.startsWith("public/images/")
-                                    ? baseUrl + "/" + product.image
-                                    : product.image
-                                }`}
+                                src={product.image}
                                 className="w-[150px] h-[150px] object-contain mx-auto mb-4"
-                                alt=""
+                                alt={product.title}
+                                loading="lazy"
                               />
                             </Link>
 

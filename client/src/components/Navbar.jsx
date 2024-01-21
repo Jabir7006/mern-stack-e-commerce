@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { AiOutlineClose, AiOutlineLogin } from "react-icons/ai";
 import { BsFillBagHeartFill, BsHeart } from "react-icons/bs";
 import { IoHomeOutline, IoStorefrontOutline } from "react-icons/io5";
@@ -10,21 +10,22 @@ import { TbBrandBlogger } from "react-icons/tb";
 import { useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
 import { handleGetProducts } from "../services/productService";
-import { baseUrl } from "../services/userService";
 import Logout from "./Logout";
 
 const Navbar = () => {
   const { user, loading } = useSelector((state) => state.user);
   const { cartItems } = useSelector((state) => state.cart);
+  const { whishListItems } = useSelector((state) => state.whishList);
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState(null);
-  const { products } = useSelector((state) => state.product);
-  const { whishListItems } = useSelector((state) => state.whishList);
-  const total = cartItems.reduce((acc, { quantity, price }) => acc + quantity * price, 0);
 
-  const handleSearch = async (e) => setSearchQuery(e.target.value);
+  const total = cartItems.reduce((acc, { quantity, price }) => acc + quantity * price, 0) || 0;
+
+  const handleSearch = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
 
   const searchContainerRef = useRef(null);
 
@@ -131,13 +132,10 @@ const Navbar = () => {
                     className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600"
                   >
                     <img
-                      src={`${
-                        product.image.startsWith("public/images/")
-                          ? baseUrl + "/" + product.image
-                          : product.image
-                      }`}
+                      src={product.image}
                       className="max-w-12 h-12"
                       alt="product image"
+                      loading="lazy"
                     />
                     <p>{product.title}</p>
                   </Link>
@@ -338,13 +336,10 @@ const Navbar = () => {
                       className="flex items-center gap-x-3 text-black border-b border-gray-300 p-3 hover:underline hover:text-blue-600"
                     >
                       <img
-                        src={`${
-                          product.image.startsWith("public/images/")
-                            ? baseUrl + "/" + product.image
-                            : product.image
-                        }`}
+                        src={product.image}
                         className="w-12 h-12"
                         alt="product image"
+                        loading="lazy"
                       />
                       <p>{product.title}</p>
                     </Link>

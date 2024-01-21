@@ -21,6 +21,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://192.168.1.103:5173",
   "https://mern-ecommerce-app-6q33.onrender.com",
+  "http://localhost:4173",
 ];
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));

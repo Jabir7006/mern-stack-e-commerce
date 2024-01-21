@@ -29,13 +29,10 @@ const Products = ({ product }) => {
         <div className="relative overflow-hidden group">
           <Link to={`/product/${product._id}`}>
             <img
-              src={`${
-                product.image.startsWith("public/images/")
-                  ? baseUrl + "/" + product.image
-                  : product.image
-              }`}
+              src={ product.image }
               className="w-[150px] h-[150px] object-contain mx-auto mb-4 "
               alt=""
+              loading="lazy"
             />
           </Link>
          
