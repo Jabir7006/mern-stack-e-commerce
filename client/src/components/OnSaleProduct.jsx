@@ -73,9 +73,9 @@ const OnSaleProduct = ({ products }) => {
         modules={[Grid, Navigation]}
       >
         {products.map((product) => (
-           <SwiperSlide key={product._id} className='border-2 border-[#EBEBEB] hover:border-yellow-400 transition-all duration-200 p-3 flex items-center gap-3'>
+           <SwiperSlide key={product._id} className='border-2 border-[#EBEBEB] hover:border-yellow-400 transition-all duration-200 p-3 !flex items-center gap-3'>
              <Link to={`/product/${product._id}`}>
-             <img src={product.image} className='max-w-[100px] h-[130px] object-fill' alt="" />
+             <img loading="lazy" src={product.image} className='max-w-[100px] h-[130px] object-fill' alt="" />
              </Link>
 
               <div>
