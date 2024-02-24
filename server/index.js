@@ -24,7 +24,14 @@ const allowedOrigins = [
   "http://localhost:4173",
 ];
 
-app.use(cors({ origin: allowedOrigins, credentials: true, methods: "GET,PUT,POST,DELETE" }));
+const corsConfig = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}
+
+app.use(cors(corsConfig));
+app.options("", cors(corsConfig))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
