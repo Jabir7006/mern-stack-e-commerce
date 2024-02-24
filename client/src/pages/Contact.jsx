@@ -91,7 +91,7 @@ const Contact = () => {
               <textarea rows={6} placeholder="Your Message" className="border-stroke dark:border-dark-3 dark:text-dark-6 dark:bg-dark text-body-color focus:border-primary w-full resize-none rounded border py-3 px-[14px] text-base outline-none" defaultValue={""} />
             </div>
             <div>
-              <button type="submit" className="w-full p-3 text-white transition border rounded border-primary bg-primary hover:bg-opacity-90">
+              <button type="submit" className="w-full p-3 text-white transition border rounded border-primary bg-[#111821] hover:bg-opacity-90">
                 Send Message
               </button>
             </div>
@@ -227,7 +227,6 @@ const Contact = () => {
   </div>
 </section>
 
-   
   )
 }
 

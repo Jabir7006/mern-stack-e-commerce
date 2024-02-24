@@ -1,8 +1,8 @@
-import React, { lazy, Suspense } from "react";
-import HeroCarousel from "./HeroCrousel";
-
+import React, { useState } from "react";
+import HeroCarousel from "./HeroCarousel";
 
 const Hero = () => {
+  const [imageLoaded, setImageLoaded] = useState(false);
   const images = [
     {
       id: 1,
@@ -26,23 +26,36 @@ const Hero = () => {
     },
   ];
 
+  const handleLoadImage = () => {
+
+      setImageLoaded(true);
+
+  };
+
+  React.useEffect(() => {
+    handleLoadImage();
+  }, [imageLoaded]);
+
   return (
     <div className="container flex flex-col gap-8 lg:gap-5 justify-around lg:flex-row">
       <div className="lg:w-[60%]">
-   
-       <HeroCarousel />
- 
+        <HeroCarousel />
       </div>
 
       <div className="grid grid-cols-2 gap-2">
         {images.map((image) => (
           <div key={image.id}>
-            <img
-              className="h-full max-w-full rounded-lg"
-              loading="lazy"
-              src={image.url}
-              alt={image.alt}
-            />
+            {imageLoaded ? (
+              <img
+                className="h-full max-w-full rounded-lg"
+                loading="lazy"
+                src={image.url}
+                alt={image.alt}
+                onLoad={handleLoadImage}
+              />
+            ) : (
+              <div className="h-[150px] md:h-full w-60 max-w-full rounded-lg bg-gray-200 animate-pulse"></div>
+            )}
           </div>
         ))}
       </div>

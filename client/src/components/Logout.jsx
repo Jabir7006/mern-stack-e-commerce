@@ -40,11 +40,7 @@ const Logout = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-
   }, []);
-
-
-
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -58,16 +54,8 @@ const Logout = () => {
           className="relative z-10 flex items-center p-1 lg:p-2 text-sm text-gray-600 lg:bg-[#20303D] border border-transparent rounded-full lg:rounded-md lg:focus:border-blue-500 lg:focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-white  lg:focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:text-white dark:bg-gray-800 focus:outline-none"
         >
           <div className="flex items-center gap-2">
-            <img
-             src={`${
-               user.image.startsWith("public/images/")
-                 ? baseUrl + "/" + user.image
-                 : user.image
-             }`}
-              className="w-8 h-8  object-cover rounded-full"
-              alt=""
-            />
-            
+            <img src={user.image} className="w-8 h-8  object-cover rounded-full" alt="" />
+
             <span className="hidden lg:block mx-1 text-white">
               {user?.firstName + " " + user?.lastName}
             </span>
@@ -88,9 +76,7 @@ const Logout = () => {
               <img
                 className="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9 border border-gray-300"
                 src={`${
-                  user.image.startsWith("public/images/")
-                    ? baseUrl + "/" + user.image
-                    : user.image
+                  user.image.startsWith("public/images/") ? baseUrl + "/" + user.image : user.image
                 }`}
                 alt="avatar"
               />

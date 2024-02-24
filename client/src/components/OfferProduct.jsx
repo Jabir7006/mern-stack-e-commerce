@@ -47,10 +47,10 @@ const OfferProduct = ({products}) => {
       </span>
       <hr className="mb-12" />
 
-      <div className='flex flex-col max-lg:items-center lg:flex-row gap-5 '>
-      <div className='border-2 border-[#EBEBEB] hover:border-yellow-400 transition-all duration-200 p-5 w-full flex flex-col lg:flex-row lg:w-1/2 items-center'>
+      <div className='flex flex-col max-lg:items-center lg:flex-row gap-5'>
+      <div className='border-2 border-[#EBEBEB] hover:border-yellow-400 transition-all duration-200 p-5 w-full flex flex-col lg:flex-row lg:w-1/2 items-center gap-8'>
         <div className='relative'>
-        <img src="images/mobile.jpg" alt="image" className='max-w-xs max-h-xs object-cover'/>
+        <img src="https://res.cloudinary.com/dkzqijrkd/image/upload/v1703508665/ecommerce/products/wfyyqchlrygl31byqh3n.jpg" alt="image" className='max-w-xs max-h-xs object-cover'/>
         <span className='absolute top-0 right-8 bg-red-600 text-white px-2'>-22%</span>
         </div>
         

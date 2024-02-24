@@ -15,9 +15,11 @@ import {
   getProductSuccess,
 } from "../redux/features/productSlice";
 import { handleGetProducts } from "../services/productService";
+import ProductSkeleton from "../components/skeleton/ProductSkeleton";
 const ProductModal = lazy(() => import("../components/ProductModal"));
 const Features = lazy(() => import("../components/Features"));
 const OfferProduct = lazy(() => import("../components/OfferProduct"));
+// const Products = lazy(() => import("../components/Products"));
 const OnSaleProduct = lazy(() => import("../components/OnSaleProduct"));
 
 const brandImg = [
@@ -93,13 +95,13 @@ const Home = () => {
           {showModal && <ProductModal />}
         </Suspense>
       </AnimatePresence>
-      {loading && <Loading />}
+      {/* {loading && <Loading />} */}
 
       <Hero />
 
       <div>
         <Suspense
-          fallback={<div className="text-center animate-pulse font-medium"> Loading... </div>}
+          fallback={<div className="w-full h-24 rounded bg-gray-200 animate-pulse"></div>}
         >
           <Features />
         </Suspense>
@@ -109,9 +111,16 @@ const Home = () => {
       <hr className="mb-12" />
 
       <div className="grid gap-2 min-[320px]:gap-5 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 lg:gap-6 items-center grid-cols-2 md:gap-x-5 justify-center">
-        {products.map((product) => (
-          <Products key={product._id} product={product} />
-        ))}
+       
+     {loading ? Array.from({ length: 10 }).map((_, index) => (
+              <ProductSkeleton key={index} />
+            )) : (
+       products.map((product) => (
+   
+        <Products key={product._id} product={product} />
+     
+    ))
+     )}
       </div>
 
       <div className="mt-14 bg-[#F1F1F1] p-6">
@@ -167,7 +176,7 @@ const Home = () => {
       </div>
 
       <Suspense
-        fallback={<div className="text-center animate-pulse font-medium"> Loading... </div>}
+        fallback={<ProductSkeleton />}
       >
         <OnSaleProduct products={products} />
       </Suspense>
