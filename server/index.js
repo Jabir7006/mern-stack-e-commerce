@@ -12,9 +12,9 @@ const seedRoute = require("./routes/seedRoute");
 const blogRoute = require("./routes/blogRoute");
 require("dotenv").config();
 
-app.listen(process.env.PORT || 5000, "0.0.0.0", async () => {
+connectDB();
+app.listen(process.env.PORT || 5000, "0.0.0.0", () => {
   console.log(`Server started on port http://localhost:${process.env.PORT}`);
-  await connectDB();
 });
 
 const allowedOrigins = [
@@ -27,11 +27,11 @@ const allowedOrigins = [
 const corsConfig = {
   origin: allowedOrigins,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
-}
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
 
 app.use(cors(corsConfig));
-app.options("", cors(corsConfig))
+app.options("", cors(corsConfig));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
