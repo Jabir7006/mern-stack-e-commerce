@@ -101,8 +101,10 @@ const activateUser = async (req, res, next) => {
     const token = createJwt({ user }, process.env.SECRET_KEY, "30d");
 
     res.cookie("token", token, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      sameSite: "none",
+      secure: false,
     });
     return successResponse(res, {
       statusCode: 201,

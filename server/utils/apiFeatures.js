@@ -16,7 +16,7 @@ class ApiFeatures {
       : {};
 
     this.query = this.query.find({ ...keyword });
-    return this;
+   return this;
   }
 
   filter() {
